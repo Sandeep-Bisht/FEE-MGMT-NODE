@@ -39,6 +39,7 @@ const PayScaleType = mongoose.model('PayScaleType')
 const PayScaleTABLE = mongoose.model('PayScale')
 const DropStatus = mongoose.model('DropStatus')
 var Moment = require('moment'); 
+const excel = require("exceljs");
 
 Moment.createFromInputFallback = function(config) {
     // unreliable string magic, or
@@ -1315,7 +1316,6 @@ router.post('/StoreStudent', upload.fields([{
                  return res.status(422).send({ error: "error for fetching profile data" })
              }
         }
-       
     })
     
     router.post('/StudentStrenghtForSecurityClassWise', async (req, res) => {
@@ -3435,6 +3435,80 @@ router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
 
         })
         res.send({})
+    })
+
+    router.get("/download", async(req, res) => {
+        console.log('isnde this', )
+        try{
+           console.log('inside try block')
+            let workbook = new excel.Workbook();
+            let worksheet = workbook.addWorksheet("Student");
+            worksheet.columns = [
+              { header: "Admission Number", key: "admission_no", },
+              { header: "Name", key: "name", },
+              { header: "Father Name", key: "father_name", },
+              { header: "Mother Name", key: "mother_name", },
+              { header: "account Number", key: "account_no", },
+              { header: "Balance", key: "balance", },
+              { header: "paid_upto_month", key: "paid_upto_month", },
+              { header: "Fee Concession", key: "fee_concession",  },
+              { header: "School ID", key: "school_id",  },
+              { header: "Unique ID", key: "unique_id",  },
+              
+              { header: "Session", key: "session",  },
+              { header: "Date_Of_Admission", key: "date_of_admission",  },
+              { header: "Parent", key: "parent",  },
+              { header: "Security_No", key: "security_no",  },
+              { header: "Old_Admission_No", key: "old_admission_no",  },
+              { header: "Aadhar_No", key: "aadhar_no",  },
+              { header: "Class_Name", key: "class_name",  },
+              { header: "Section", key: "section",  },
+              { header: "Subjects", key: "subjects",  },
+              { header: "Is_Start_From_First_Class", key: "is_start_from_first_class",  },
+              { header: "Last_Class", key: "last_class",  },
+              { header: "Category", key: "category",  },
+              { header: "House", key: "house",  },
+              { header: "Sex", key: "sex",  },
+              { header: "House", key: "house",  },
+              { header: "Dob", key: "dob",  },
+              { header: "Nationality", key: "nationality",  },
+              { header: "Registration Number", key: "reg_no",  },
+              { header: "Roll Number", key: "roll_no",  },
+              { header: "Board Roll Number", key: "board_roll_no",  },
+              { header: "Last School", key: "last_school",  },
+
+              { header: "Religion", key: "religion",  },
+              { header: "Bus Fare Concession", key: "bus_fare_concession",  },
+              { header: "Vehicle Number", key: "vehicle_no",  },
+              { header: "Teacher ward", key: "is_teacher_ward",  },
+              { header: "Board Roll Number", key: "board_roll_no",  },
+              { header: "Paid Upto Year", key: "paid_upto_year",  },
+
+            ];
+            
+            // Add Array Rows
+            const students =  await Student.find()
+           
+            worksheet.addRows(students);
+            
+    
+            res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=" + "tutorials.xlsx"
+    );
+            return workbook.xlsx.write(res).then(function () {
+              res.status(200).end();
+            });
+    
+        }catch(error){
+            res.send({message:"Error occured while fetching records"})
+        }
+    
+       
     })
     //End Update All Parents API
 module.exports = router

@@ -1539,12 +1539,14 @@ router.post('/StoreStudent', upload.fields([{
     router.post('/FeesClasswise', async (req, res) => {
         console.log('yes im in' + req.body.class_name)
         const { class_name,session } = req.body;
+         console.log('yes im in fee class wiseee' + class_name, session)
         try {
            const data = await FeeStructure.find({ class_name,session })
+           console.log("chaecking data", data)
             if (data) {
-                
+                res.send(data)
             }
-            res.send(data)
+           
         }
         catch (err) {
             return res.status(422).send({ error: "error for fetching profile data" })

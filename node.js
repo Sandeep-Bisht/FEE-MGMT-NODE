@@ -59,7 +59,7 @@ mongoose.set('useCreateIndex',true);
 mongoose.connect(mongoUrl,{
     auth: {
         "user":"admin2",
-        "password":"T3st$3m0",  
+        "password":"SOSh3AWDPC4499GTbYhxY8",  
       },
      useNewUrlParser:true,
      useUnifiedTopology: true

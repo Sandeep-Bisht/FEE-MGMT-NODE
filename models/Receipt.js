@@ -86,6 +86,15 @@ const FeeReceiptSchema = new Schema({
     fine:{
         type:String
     },
+    paid_fine:{
+        type:String
+    },
+    dues_fine:{
+        type:String,
+    },
+    dues_fee:{
+        type:String,
+    },
     balance:{
         type:String
     },

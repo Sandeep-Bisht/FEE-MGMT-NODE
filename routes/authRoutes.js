@@ -142,10 +142,11 @@ router.post('/StoreTcDetails', upload.single('image'), async (req, res) => {
 
     })
     router.post('/getTransferCertificate', async (req, res) => {
-        const {admission_no} = req.body
+        const { session,admission_no,school_id} = req.body
         console.log(req.body)
         try {
-                await TransferCertificate.find({admission_no}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                await TransferCertificate.find({session,admission_no,school_id}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                    console.log(data,"check the data using admission number")
                 res.send(data[0])
             })
         }
@@ -1135,7 +1136,7 @@ router.post('/StoreStudent', upload.fields([{
         const { session,admission_no,school_id} = req.body
         console.log(req.body)
         try {
-             await Academic.find({admission_no,school_id}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+             await Academic.find({session,admission_no,school_id}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
                 console.log("gfgfdgfdgfdgsadsadadsa",data)
                 res.send(data)
             })
@@ -1572,40 +1573,40 @@ router.post('/StoreStudent', upload.fields([{
     })
 // end Fee Structure routes
 // Start Fee Receipt routes
-    router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
-    console.log("unique_id"+req.body.unique_id);
-    const {receipt_date,take_computer,fee_concession,is_full_free_ship,is_teacher_ward,fees,defaulter_month,name,ref_receipt_no,last_fee_date,session,admission_no,class_name,section,prospectus_fee,registration_fee,admission_fee,security_fee,account_no,paid_fees,Allfees,paid_month,paid_months,fine,paid_amount,balance,total_one_time_fee,total_monthly_fee,total_annual_fee,grand_total,payment_mode,bank,bank_v_no,check_no,bank_date,unique_id} = req.body;
+router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
+    console.log("unique_id" + req.body.unique_id);
+    const {
+        receipt_date, take_computer, fee_concession, is_full_free_ship, is_teacher_ward, fees, defaulter_month, name, ref_receipt_no, last_fee_date, session, admission_no, class_name, section, prospectus_fee, registration_fee, admission_fee, security_fee, account_no, paid_fees, Allfees, paid_month, paid_months, fine, paid_fine, dues_fine, dues_fee, paid_amount, balance, total_one_time_fee, total_monthly_fee, total_annual_fee, grand_total, payment_mode, bank, bank_v_no, check_no, bank_date, unique_id
+    } = req.body;
+
     try {
-        const dataa = await Receipt.findOne({ session }).sort({ _id: -1 }).exec((err,data)=>{
-            var receipt_no
-            if(data !=null){
-                 receipt_no= parseInt(data.receipt_no)+1
-            }else{
-                receipt_no= 1
+        // Find the latest receipt for the given session
+        
+        let receipt_no;
+        if (class_name == "I" || class_name == "II" || class_name == "III" || class_name == "IV" || class_name == "V") {
+            let latestReceipt = await Receipt.findOne({ session ,receipt_no:{$regex:/^(PRE)/}}).sort({ _id: -1 }).exec();
+            receipt_no = "PRE" + String(Number(latestReceipt ? latestReceipt.receipt_no.slice(3) : 0) + 1).padStart(3, '0');
+        } else {
+            // Check if the previous receipt used "PRE" as the prefix
+            let latestReceipt = await Receipt.findOne({ session ,receipt_no:{$regex:/^(SEC)/}}).sort({ _id: -1 }).exec();
+            const prevReceiptUsedPRE = latestReceipt && latestReceipt.receipt_no.startsWith("PRE");
+            if (prevReceiptUsedPRE) {
+                receipt_no = "PRE" + String(Number(latestReceipt.receipt_no.slice(3)) + 1).padStart(3, '0');
+            } else {
+                receipt_no = "SEC" + String(Number(latestReceipt ? latestReceipt.receipt_no.slice(3) : 0) + 1).padStart(3, '0');
             }
+        }
+        const Fee_structure_data = new Receipt({ unique_id: session + receipt_no, receipt_date, take_computer, fee_concession, is_full_free_ship, is_teacher_ward, fees, defaulter_month, name, receipt_no, last_fee_date, ref_receipt_no, session, admission_no, class_name, section, prospectus_fee, registration_fee, admission_fee, security_fee, account_no, paid_fees, Allfees, paid_month, paid_months, fine, paid_fine, dues_fee, dues_fine, paid_amount, balance, total_one_time_fee, total_monthly_fee, total_annual_fee, grand_total, payment_mode, bank, bank_v_no, check_no, bank_date })
+        await Fee_structure_data.save();
 
-                const Fee_structure_data = new Receipt({unique_id:session+receipt_no,receipt_date,take_computer,fee_concession,is_full_free_ship,is_teacher_ward,fees,defaulter_month,name,receipt_no,last_fee_date,ref_receipt_no,session,admission_no,class_name,section,prospectus_fee,registration_fee,admission_fee,security_fee,account_no,paid_fees,Allfees,paid_month,paid_months,fine,paid_amount,balance,total_one_time_fee,total_monthly_fee,total_annual_fee,grand_total,payment_mode,bank,bank_v_no,check_no,bank_date})
-         Fee_structure_data.save();
-        if (Fee_structure_data) {
-            console.log("Fee_structure_data")
-        }
-        else {
-            console.log("data is not stored")
-        }
-        // console.log(Fee_structure_data);
-        res.send(Fee_structure_data)
-            
-           
-        })
-       
-    
+        console.log("Fee_structure_data");
+        res.send(Fee_structure_data);
     } catch (err) {
-        return res.status(422).send(err.message)
-     
+        return res.status(422).send(err.message);
     }
-    })
+});
 
-    router.post('/SearchOldfee', async (req, res) => {
+ router.post('/SearchOldfee', async (req, res) => {
         console.log('yes im in' + req.body.admission_no)
         const { admission_no } = req.body;
         try {

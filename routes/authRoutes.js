@@ -1471,9 +1471,9 @@ router.post('/StoreStudent', upload.fields([{
 // Start Fee Structure routes
     router.post('/StoreFeeStructure', upload.single('image'), async (req, res) => {
     console.log(req.body);
-    const {session,unique_id,school_id,class_name,section,total_one_time_fee,fees,total_monthly_fee,total_annual_fee,grand_total} = req.body;
+    const {session,unique_id,school_id,class_name,section,total_one_time_fee,fees,total_monthly_fee,total_annual_fee,grand_total,annual_terms_fee,examination_fee,admission_fee,registration_fee} = req.body;
     try {
-        const Fee_structure_data = new FeeStructure({session,unique_id,school_id,class_name,section,total_one_time_fee,fees,total_monthly_fee,total_annual_fee,grand_total})
+        const Fee_structure_data = new FeeStructure({session,unique_id,school_id,class_name,section,total_one_time_fee,fees,total_monthly_fee,total_annual_fee,grand_total,annual_terms_fee,examination_fee,admission_fee,registration_fee})
         await Fee_structure_data.save();
         if (Fee_structure_data) {
             console.log("Fee_structure_data")
@@ -1481,7 +1481,6 @@ router.post('/StoreStudent', upload.fields([{
         else {
             console.log("data is not stored")
         }
-        console.log(Fee_structure_data);
         res.send(Fee_structure_data)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -1555,9 +1554,9 @@ router.post('/StoreStudent', upload.fields([{
     })
      router.put('/updateFeeStructure', upload.single('image') ,async (req, res) => {
         console.log("Yes I Am In")
-        const { _id,session,school_id,class_name,section,total_one_time_fee,fees,total_monthly_fee,total_annual_fee,grand_total } = req.body;
+        const { _id,session,school_id,class_name,section,total_one_time_fee,fees,total_monthly_fee,total_annual_fee,grand_total,annual_terms_fee,examination_fee,admission_fee,registration_fee } = req.body;
         // const image = req.file.path
-        FeeStructure.findByIdAndUpdate({_id},{ session,school_id,class_name,section,total_one_time_fee,fees,total_monthly_fee,total_annual_fee,grand_total }, function(err, result){
+        FeeStructure.findByIdAndUpdate({_id},{ session,school_id,class_name,section,total_one_time_fee,fees,total_monthly_fee,total_annual_fee,grand_total,annual_terms_fee,examination_fee,admission_fee,registration_fee }, function(err, result){
             if(err){
                 res.send(err)
             }
@@ -1578,7 +1577,7 @@ router.post('/StoreStudent', upload.fields([{
 router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
     console.log("unique_id" + req.body.unique_id);
     const {
-        receipt_date, take_computer, fee_concession, is_full_free_ship, is_teacher_ward, fees, defaulter_month, name, ref_receipt_no, last_fee_date, session, admission_no, class_name, section, prospectus_fee, registration_fee, admission_fee, security_fee, account_no, paid_fees, Allfees, paid_month, paid_months, fine, paid_fine, dues_fine, dues_fee, paid_amount, balance, total_one_time_fee, total_monthly_fee, total_annual_fee, grand_total, payment_mode, bank, bank_v_no, check_no, bank_date, unique_id
+        receipt_date, take_computer, fee_concession, is_full_free_ship, is_teacher_ward, fees, defaulter_month, name, ref_receipt_no, last_fee_date, session, admission_no, class_name, section, prospectus_fee, registration_fee, admission_fee,annual_terms_fee,examination_fee, security_fee, account_no, paid_fees, Allfees, paid_month, paid_months, fine, paid_fine, dues_fine, dues_fee, paid_amount, balance, total_one_time_fee, total_monthly_fee, total_annual_fee, grand_total, payment_mode, bank, bank_v_no, check_no, bank_date, unique_id
     } = req.body;
 
     try {
@@ -1598,10 +1597,8 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                 receipt_no = "SEC" + String(Number(latestReceipt ? latestReceipt.receipt_no.slice(3) : 0) + 1).padStart(3, '0');
             }
         }
-        const Fee_structure_data = new Receipt({ unique_id: session + receipt_no, receipt_date, take_computer, fee_concession, is_full_free_ship, is_teacher_ward, fees, defaulter_month, name, receipt_no, last_fee_date, ref_receipt_no, session, admission_no, class_name, section, prospectus_fee, registration_fee, admission_fee, security_fee, account_no, paid_fees, Allfees, paid_month, paid_months, fine, paid_fine, dues_fee, dues_fine, paid_amount, balance, total_one_time_fee, total_monthly_fee, total_annual_fee, grand_total, payment_mode, bank, bank_v_no, check_no, bank_date })
+        const Fee_structure_data = new Receipt({ unique_id: session + receipt_no, receipt_date, take_computer, fee_concession, is_full_free_ship, is_teacher_ward, fees, defaulter_month, name, receipt_no, last_fee_date, ref_receipt_no, session, admission_no, class_name, section, prospectus_fee, registration_fee, admission_fee,annual_terms_fee,examination_fee, security_fee, account_no, paid_fees, Allfees, paid_month, paid_months, fine, paid_fine, dues_fee, dues_fine, paid_amount, balance, total_one_time_fee, total_monthly_fee, total_annual_fee, grand_total, payment_mode, bank, bank_v_no, check_no, bank_date })
         await Fee_structure_data.save();
-
-        console.log("Fee_structure_data");
         res.send(Fee_structure_data);
     } catch (err) {
         return res.status(422).send(err.message);

@@ -62,6 +62,12 @@ const FeeReceiptSchema = new Schema({
     registration_fee:{
         type:String,        
     },
+    annual_terms_fee:{
+        type:String,
+    },
+    examination_fee:{
+        type:String,
+    },
     admission_fee:{
         type:String,        
     },

@@ -26,6 +26,18 @@ const FeeStructureSchema = new Schema({
     total_one_time_fee:{
         type:String,        
     },
+    annual_terms_fee:{
+        type:String,
+    },
+    examination_fee:{
+        type:String
+    },
+    admission_fee:{
+        type:String,
+    },
+    registration_fee:{
+        type:String,
+    },
     total_annual_fee:{
         type:String,        
     },

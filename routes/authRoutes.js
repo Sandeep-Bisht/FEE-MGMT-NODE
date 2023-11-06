@@ -85,7 +85,7 @@ var storage = multer.diskStorage({
 //end code for images
 // signin Routes
     router.post('/signin', async (req, res) => {
-        console.log("yes im vineet")
+        console.log("yes im Deepak")
         const { username, password,} = req.body
         console.log(req.body)
         console.log(username, password)
@@ -1306,7 +1306,7 @@ router.post('/StoreStudent', upload.fields([{
             }
         }
         else{
-            console.log("yes ia am in vineet")
+            console.log("yes ia am in Deepak")
             try {
                 await Academic.find({session,class_name,section,tc_status:'0'}).populate('student').sort({ section: -1 }).exec((err,data)=>{
                     console.log("gfgfdgfdgfdgsadsadadsa",data)
@@ -1352,7 +1352,7 @@ router.post('/StoreStudent', upload.fields([{
             }
         }
         else{
-            console.log("yes ia am in vineet")
+            console.log("yes ia am in Deepak")
             try {
                 await Academic.find({session,class_name,section}).populate('student').sort({ section: -1 }).exec((err,data)=>{
                     console.log("gfgfdgfdgfdgsadsadadsa",data)
@@ -1810,10 +1810,10 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                     }else{
                     res.send([undefined]) 
                     }
-                    console.log("vineet"+data)
+                    console.log("Deepak"+data)
                 })
                
-                 console.log("vineet"+dataa)
+                 console.log("Deepak"+dataa)
                 //  res.send(dataa)
              }
              catch (err) {
@@ -1839,10 +1839,10 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                     }else{
                     res.send([undefined]) 
                     }
-                    console.log("vineet"+data)
+                    console.log("Deepak"+data)
                 })
                
-                 console.log("vineet"+dataa)
+                 console.log("Deepak"+dataa)
                 //  res.send(dataa)
              }
              catch (err) {
@@ -1861,10 +1861,10 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                         }else{
                         res.send([undefined]) 
                         }
-                        console.log("vineet"+data)
+                        console.log("Deepak"+data)
                     })
                    
-                     console.log("vineet"+dataa)
+                     console.log("Deepak"+dataa)
                     //  res.send(dataa)
                  }
                  catch (err) {
@@ -1885,10 +1885,10 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                     }else{
                     res.send([undefined]) 
                     }
-                    console.log("vineet"+data)
+                    console.log("Deepak"+data)
                 })
                
-                 console.log("vineet"+dataa)
+                 console.log("Deepak"+dataa)
                 //  res.send(dataa)
              }
              catch (err) {
@@ -3217,7 +3217,7 @@ router.post('/StudentStrenghtForDefaulter', async (req, res) => {
         }
     }
     else{
-        console.log("yes ia am in vineet")
+        console.log("yes ia am in Deepak")
         
         
          
@@ -3298,7 +3298,7 @@ router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
             }
         }
         else{
-            console.log("yes ia am in vineet")
+            console.log("yes ia am in Deepak")
             try {
                 await Academic.find({session,class_name,section}).populate('student').sort({ section: -1 }).exec((err,data)=>{
                     console.log("gfgfdgfdgfdgsadsadadsa",data)
@@ -3345,7 +3345,7 @@ router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
             }
         }
         else{
-            console.log("yes ia am in vineet")
+            console.log("yes ia am in Deepak")
             try {
                 await Academic.find({session,tc_status:'sos',class_name,section}).populate('student').sort({ section: -1 }).exec((err,data)=>{
                     console.log("gfgfdgfdgfdgsadsadadsa",data)

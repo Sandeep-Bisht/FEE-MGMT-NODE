@@ -2737,8 +2737,6 @@ router.post('/getStudentCount', async (req, res) => {
     }
 })
 // End Dashboard Student Count Routes
-
-
 //  Security Register All Routes
 
 router.post('/SearchOldfeeSecurityRegisterAll', async (req, res) => {

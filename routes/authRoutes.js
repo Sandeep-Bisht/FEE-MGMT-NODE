@@ -1584,7 +1584,7 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
         // Find the latest receipt for the given session
         
         let receipt_no;
-        if (class_name == "I" || class_name == "II" || class_name == "III" || class_name == "IV" || class_name == "V") {
+        if (class_name == "KG" || class_name == "PG" || class_name == "I" || class_name == "II" || class_name == "III" || class_name == "IV" || class_name == "V") {
             let latestReceipt = await Receipt.findOne({ session ,receipt_no:{$regex:/^(PRE)/}}).sort({ _id: -1 }).exec();
             receipt_no = "PRE" + String(Number(latestReceipt ? latestReceipt.receipt_no.slice(3) : 0) + 1).padStart(3, '0');
         } else {
@@ -2739,8 +2739,6 @@ router.post('/getStudentCount', async (req, res) => {
     }
 })
 // End Dashboard Student Count Routes
-
-
 //  Security Register All Routes
 
 router.post('/SearchOldfeeSecurityRegisterAll', async (req, res) => {

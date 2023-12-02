@@ -1274,12 +1274,12 @@ router.post('/StoreStudent', upload.fields([{
     })
 
     router.post('/StudentStrenght', async (req, res) => {
-        console.log('yes im in' + req.body.class_name)
+        console.log('check student stranght' + req.body.class_name)
         const {session,section,class_name } = req.body;
-         if(class_name == ""){
+         if(!class_name){
             try {
                 await Academic.find({session,tc_status:'0'}).populate('student').sort({ class_name: 1 }).exec((err,data)=>{
-                    console.log("gfgfdgfdgfdgsadsadadsa",data)
+                    console.log("hi strainght",data)
                     res.send(data)
                 })
              }
@@ -1287,16 +1287,16 @@ router.post('/StoreStudent', upload.fields([{
                  return res.status(422).send({ error: "error for fetching profile data" })
              }
         }
-        else if(section ==""){
+        else if(!section){
             try {
                 if(class_name!="PRE-NUR"){
                 await Academic.find({session,class_name,tc_status:"0"}).populate('student').sort({ section: 1 }).exec((err,data)=>{
-                    console.log("gfgfdgfdgfdgsadsadadsa",data)
+                    console.log("helo strainght",data)
                     res.send(data)
                 })
                 }else{
                     await Academic.find({session,class_name,section,tc_status:"0"}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
-                        console.log("gfgfdgfdgfdgsadsadadsa",data)
+                        console.log("else straingth",data)
                         res.send(data)
                     })
                 }
@@ -1306,10 +1306,8 @@ router.post('/StoreStudent', upload.fields([{
             }
         }
         else{
-            console.log("yes ia am in Deepak")
             try {
-                await Academic.find({session,class_name,section,tc_status:'0'}).populate('student').sort({ section: -1 }).exec((err,data)=>{
-                    console.log("gfgfdgfdgfdgsadsadadsa",data)
+                await Academic.find({session,class_name,section}).populate('student').sort({ section: -1 }).exec((err,data)=>{
                     res.send(data)
                 })
              }
@@ -2725,7 +2723,7 @@ router.post('/getStudentCount', async (req, res) => {
     const { session,school_id} = req.body
     console.log(req.body)
     try {
-        Academic.count({session,school_id,tc_status:"0"}, function(err, result) {
+        Academic.count({session,school_id}, function(err, result) {
             if (err) {
               console.log(err);
             } else {

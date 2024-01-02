@@ -131,6 +131,18 @@ const FeeReceiptSchema = new Schema({
     bank_date:{
         type:String,        
     },
+    previous_year_dues_fee:{
+        type:String,
+    },
+    previous_year_dues_fine:{
+        type:String,
+    },
+    paid_previous_year_fees:{
+        type:String,
+    },
+    paid_previous_year_fine:{
+        type:String,
+    },
     fees:{
         type:String,    
     }

@@ -1596,6 +1596,7 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
             }
         }
         const Fee_structure_data = new Receipt({ unique_id: session + receipt_no, receipt_date, take_computer, fee_concession, is_full_free_ship, is_teacher_ward, fees, defaulter_month, name, receipt_no, last_fee_date, ref_receipt_no, session, admission_no, class_name, section, prospectus_fee, registration_fee, admission_fee,annual_terms_fee,examination_fee, security_fee, account_no, paid_fees, Allfees, paid_month, paid_months, fine, paid_fine, dues_fee, dues_fine, paid_amount, balance, total_one_time_fee, total_monthly_fee, total_annual_fee, grand_total, payment_mode, bank, bank_v_no, check_no, bank_date,previous_year_dues_fee,previous_year_dues_fine,paid_previous_year_fees,paid_previous_year_fine })
+        // const Fee_structure_data = new Receipt({ unique_id, receipt_date, take_computer, fee_concession, is_full_free_ship, is_teacher_ward, fees, defaulter_month, name, receipt_no, last_fee_date, ref_receipt_no, session, admission_no, class_name, section, prospectus_fee, registration_fee, admission_fee,annual_terms_fee,examination_fee, security_fee, account_no, paid_fees, Allfees, paid_month, paid_months, fine, paid_fine, dues_fee, dues_fine, paid_amount, balance, total_one_time_fee, total_monthly_fee, total_annual_fee, grand_total, payment_mode, bank, bank_v_no, check_no, bank_date,previous_year_dues_fee,previous_year_dues_fine,paid_previous_year_fees,paid_previous_year_fine })
         await Fee_structure_data.save();
         res.send(Fee_structure_data);
     } catch (err) {
@@ -1783,6 +1784,67 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
             return res.status(422).send({ error: "error for fetching profile data" })
         }
     })
+    const currentDate = new Date();
+    const juniorValidClassRanges = ["KG", "PG", "NURSERY", "I", "II", "III", "IV", "V"];
+    const seniorValidClassRanges = ["VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+    
+    router.post('/AllReceiptsCurrentMonth', async (req, res) => {
+        console.log("Inside AllReceiptsCurrentMonth");
+        const { class_name, session, date } = req.body;
+        console.log("Received class_name:", class_name);
+    
+        try {
+            let validClassRanges;
+            if (class_name.toLowerCase() === "kg-to-v") {
+                validClassRanges = juniorValidClassRanges;
+            } else if (class_name.toLowerCase() === "vi-to-xii") {
+                validClassRanges = seniorValidClassRanges;
+            } else {
+                res.status(400).send({ error: "Invalid class_name. Please provide 'KG-to-V' or 'VI-to-XII'." });
+                return;
+            }
+    
+            const selectedDate = new Date(date);
+            const selectedSession = session;
+    
+            console.log("Selected Date:", selectedDate);
+            console.log("Selected Session:", selectedSession);
+    
+            const isCurrentMonth = selectedDate.getMonth() + 1 === currentDate.getMonth() + 1;
+            const isCurrentSession = selectedSession === `${currentDate.getFullYear() - 1}-${currentDate.getFullYear()}`;
+    
+            console.log("Is Current Month:", isCurrentMonth);
+            console.log("Is Current Session:", isCurrentSession);
+    
+            if (isCurrentMonth && isCurrentSession) {
+                const startOfMonth = new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), 1);
+                const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0, 23, 59, 59);
+    
+                console.log("Date Range:", startOfMonth, endOfMonth);
+    
+                const query = {
+                    class_name: { $in: validClassRanges },
+                    receipt_date: {
+                        $gte: startOfMonth.toISOString().split('T')[0],
+                        $lte: endOfMonth.toISOString().split('T')[0]
+                    }
+                };
+    
+                console.log("MongoDB Query:", JSON.stringify(query));
+    
+                const receipts = await Receipt.find(query).sort({ class_name: 1 });
+                console.log("Retrieved receipts:", receipts);
+    
+                res.send(receipts);
+            } else {
+                res.status(400).send({ error: "Invalid date or session. Please provide the current month and session." });
+            }
+        } catch (err) {
+            console.error("Error:", err);
+            res.status(500).send({ error: "Internal server error." });
+        }
+    });
+    
     router.get('/getFeeReceipt', async (req, res) => {
         try {
             const data = await Receipt.find()

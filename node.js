@@ -66,7 +66,6 @@ mongoose.connect(mongoUrl,{
 })
 mongoose.connection.on('connected',()=>{
     console.log('connected to mongo db');
-    console.log('connected to mongo db');
 })
 mongoose.connection.on('error',(err)=>{
     console.log('this is error',err);

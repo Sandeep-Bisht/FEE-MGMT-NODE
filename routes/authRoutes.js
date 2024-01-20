@@ -85,6 +85,7 @@ var storage = multer.diskStorage({
 //end code for images
 // signin Routes
     router.post('/signin', async (req, res) => {
+        console.log("yes im Deepak")
         const { username, password,} = req.body
         console.log(req.body)
         console.log(username, password)
@@ -1349,6 +1350,7 @@ router.post('/StoreStudent', upload.fields([{
             }
         }
         else{
+            console.log("yes ia am in Deepak")
             try {
                 await Academic.find({session,class_name,section}).populate('student').sort({ section: -1 }).exec((err,data)=>{
                     console.log("gfgfdgfdgfdgsadsadadsa",data)
@@ -1803,6 +1805,9 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
             const startCustomDate = new Date(startDate);
             const endCustomDate = new Date(endDate);
     
+            console.log("Start Date:", startCustomDate.toISOString().split('T')[0]);
+            console.log("End Date:", endCustomDate.toISOString().split('T')[0]);
+    
             const query = {
                 class_name: { $in: validClassRanges },
                 receipt_date: {
@@ -1852,8 +1857,10 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                     }else{
                     res.send([undefined]) 
                     }
+                    console.log("Deepak"+data)
                 })
                
+                 console.log("Deepak"+dataa)
                 //  res.send(dataa)
              }
              catch (err) {
@@ -1879,8 +1886,10 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                     }else{
                     res.send([undefined]) 
                     }
+                    console.log("Deepak"+data)
                 })
                
+                 console.log("Deepak"+dataa)
                 //  res.send(dataa)
              }
              catch (err) {
@@ -1899,8 +1908,10 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                         }else{
                         res.send([undefined]) 
                         }
+                        console.log("Deepak"+data)
                     })
                    
+                     console.log("Deepak"+dataa)
                     //  res.send(dataa)
                  }
                  catch (err) {
@@ -1921,8 +1932,10 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                     }else{
                     res.send([undefined]) 
                     }
+                    console.log("Deepak"+data)
                 })
                
+                 console.log("Deepak"+dataa)
                 //  res.send(dataa)
              }
              catch (err) {
@@ -3248,7 +3261,10 @@ router.post('/StudentStrenghtForDefaulter', async (req, res) => {
              return res.status(422).send({ error: "error for fetching profile data" })
         }
     }
-    else{        
+    else{
+        console.log("yes ia am in Deepak")
+        
+        
          
     }
    
@@ -3327,6 +3343,7 @@ router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
             }
         }
         else{
+            console.log("yes ia am in Deepak")
             try {
                 await Academic.find({session,class_name,section}).populate('student').sort({ section: -1 }).exec((err,data)=>{
                     console.log("gfgfdgfdgfdgsadsadadsa",data)
@@ -3373,6 +3390,7 @@ router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
             }
         }
         else{
+            console.log("yes ia am in Deepak")
             try {
                 await Academic.find({session,tc_status:'sos',class_name,section}).populate('student').sort({ section: -1 }).exec((err,data)=>{
                     console.log("gfgfdgfdgfdgsadsadadsa",data)

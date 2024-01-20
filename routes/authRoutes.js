@@ -85,7 +85,6 @@ var storage = multer.diskStorage({
 //end code for images
 // signin Routes
     router.post('/signin', async (req, res) => {
-        console.log("yes im Deepak")
         const { username, password,} = req.body
         console.log(req.body)
         console.log(username, password)
@@ -1350,7 +1349,6 @@ router.post('/StoreStudent', upload.fields([{
             }
         }
         else{
-            console.log("yes ia am in Deepak")
             try {
                 await Academic.find({session,class_name,section}).populate('student').sort({ section: -1 }).exec((err,data)=>{
                     console.log("gfgfdgfdgfdgsadsadadsa",data)
@@ -1788,14 +1786,12 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
     const juniorValidClassRanges = ["KG", "PG", "NURSERY", "I", "II", "III", "IV", "V"];
     const seniorValidClassRanges = ["VI", "VII", "VIII", "IX", "X", "XI", "XII"];
     
-    router.post('/AllReceiptsCurrentMonth', async (req, res) => {
-        console.log("Inside AllReceiptsCurrentMonth");
-        const { class_name, session, date } = req.body;
-        console.log("Received class_name:", class_name);
+    router.post('/AllReceiptsCustomDateRange', async (req, res) => {
+        const { class_name, session, startDate, endDate } = req.body;
     
         try {
             let validClassRanges;
-            if (class_name.toLowerCase() === "kg-to-v") {
+            if (class_name.toLowerCase() === "pg-to-v") {
                 validClassRanges = juniorValidClassRanges;
             } else if (class_name.toLowerCase() === "vi-to-xii") {
                 validClassRanges = seniorValidClassRanges;
@@ -1804,46 +1800,32 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                 return;
             }
     
-            const selectedDate = new Date(date);
-            const selectedSession = session;
+            const startCustomDate = new Date(startDate);
+            const endCustomDate = new Date(endDate);
     
-            console.log("Selected Date:", selectedDate);
-            console.log("Selected Session:", selectedSession);
+            const query = {
+                class_name: { $in: validClassRanges },
+                receipt_date: {
+                    $gte: startCustomDate.toISOString().split('T')[0],
+                    $lte: endCustomDate.toISOString().split('T')[0]
+                },
+                session: session  // Include session in the query
+            };
     
-            const isCurrentMonth = selectedDate.getMonth() + 1 === currentDate.getMonth() + 1;
-            const isCurrentSession = selectedSession === `${currentDate.getFullYear() - 1}-${currentDate.getFullYear()}`;
+            console.log("Query:", query);
     
-            console.log("Is Current Month:", isCurrentMonth);
-            console.log("Is Current Session:", isCurrentSession);
+            const receipts = await Receipt.find(query).sort({ class_name: 1 });
     
-            if (isCurrentMonth && isCurrentSession) {
-                const startOfMonth = new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), 1);
-                const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0, 23, 59, 59);
+            console.log("Result:", receipts);
     
-                console.log("Date Range:", startOfMonth, endOfMonth);
-    
-                const query = {
-                    class_name: { $in: validClassRanges },
-                    receipt_date: {
-                        $gte: startOfMonth.toISOString().split('T')[0],
-                        $lte: endOfMonth.toISOString().split('T')[0]
-                    }
-                };
-    
-                console.log("MongoDB Query:", JSON.stringify(query));
-    
-                const receipts = await Receipt.find(query).sort({ class_name: 1 });
-                console.log("Retrieved receipts:", receipts);
-    
-                res.send(receipts);
-            } else {
-                res.status(400).send({ error: "Invalid date or session. Please provide the current month and session." });
-            }
+            res.send(receipts);
         } catch (err) {
             console.error("Error:", err);
             res.status(500).send({ error: "Internal server error." });
         }
     });
+    
+    
     
     router.get('/getFeeReceipt', async (req, res) => {
         try {
@@ -1870,10 +1852,8 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                     }else{
                     res.send([undefined]) 
                     }
-                    console.log("Deepak"+data)
                 })
                
-                 console.log("Deepak"+dataa)
                 //  res.send(dataa)
              }
              catch (err) {
@@ -1899,10 +1879,8 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                     }else{
                     res.send([undefined]) 
                     }
-                    console.log("Deepak"+data)
                 })
                
-                 console.log("Deepak"+dataa)
                 //  res.send(dataa)
              }
              catch (err) {
@@ -1921,10 +1899,8 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                         }else{
                         res.send([undefined]) 
                         }
-                        console.log("Deepak"+data)
                     })
                    
-                     console.log("Deepak"+dataa)
                     //  res.send(dataa)
                  }
                  catch (err) {
@@ -1945,10 +1921,8 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                     }else{
                     res.send([undefined]) 
                     }
-                    console.log("Deepak"+data)
                 })
                
-                 console.log("Deepak"+dataa)
                 //  res.send(dataa)
              }
              catch (err) {
@@ -3274,10 +3248,7 @@ router.post('/StudentStrenghtForDefaulter', async (req, res) => {
              return res.status(422).send({ error: "error for fetching profile data" })
         }
     }
-    else{
-        console.log("yes ia am in Deepak")
-        
-        
+    else{        
          
     }
    
@@ -3356,7 +3327,6 @@ router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
             }
         }
         else{
-            console.log("yes ia am in Deepak")
             try {
                 await Academic.find({session,class_name,section}).populate('student').sort({ section: -1 }).exec((err,data)=>{
                     console.log("gfgfdgfdgfdgsadsadadsa",data)
@@ -3403,7 +3373,6 @@ router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
             }
         }
         else{
-            console.log("yes ia am in Deepak")
             try {
                 await Academic.find({session,tc_status:'sos',class_name,section}).populate('student').sort({ section: -1 }).exec((err,data)=>{
                     console.log("gfgfdgfdgfdgsadsadadsa",data)

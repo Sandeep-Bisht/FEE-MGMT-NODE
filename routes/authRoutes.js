@@ -86,16 +86,20 @@ var storage = multer.diskStorage({
 // signin Routes
     router.post('/signin', async (req, res) => {
         const { username, password,} = req.body
+        console.log(req.body)
+        console.log(username, password)
         if (!username || !password) {
             return res.status(422).send({ error: "must provide email or password2" })
         }
         const user = await User.findOne({ username ,password})
+        console.log(user)
         if (!user) {
             return res.status(422).send({ error: "must provide email or password3" })
         }
         try {
             // await user.comparePassword(password);
             const token = jwt.sign({ userId: user.id }, jwtkey)
+            console.log(user.id)
             res.send({ token: token, userid: user.id, user})
         }
         catch (err) {
@@ -108,6 +112,7 @@ var storage = multer.diskStorage({
 // Start Transfer certificate routes
 
 router.post('/StoreTcDetails', upload.single('image'), async (req, res) => {
+    console.log("yes i am in")
     const { date_of_tc,date_of_cheque,date_of_application,name,account_no,parents,class_name,section,category,nationality,date_of_admission,dob,house,address,security_deposit,return_mode,bank,tc_no,cheque_no,reason,working_days,present_days,admission_no,is_promoted,promoted_in,result,last_school,result_remark,concession,concession_remark,games_remark,other_remark,conduct,session,tc_status,student_id,academic_id,left_on} = req.body;
     
     Student.findByIdAndUpdate({_id:student_id},{tc_status}, function(err, resultt){
@@ -137,8 +142,10 @@ router.post('/StoreTcDetails', upload.single('image'), async (req, res) => {
     })
     router.post('/getTransferCertificate', async (req, res) => {
         const { session,admission_no,school_id} = req.body
+        console.log(req.body)
         try {
                 await TransferCertificate.find({session,admission_no,school_id}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                    console.log(data,"check the data using admission number")
                 res.send(data[0])
             })
         }
@@ -148,8 +155,10 @@ router.post('/StoreTcDetails', upload.single('image'), async (req, res) => {
     })
     router.post('/getAllTransferCertificate', async (req, res) => {
         const {admission_no} = req.body
+        console.log(req.body)
         try {
                 await TransferCertificate.find({tc_status:'1'}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                console.log("gfgfdgfdgfdgsadsadadsa",data)
                 res.send(data)
             })
         }
@@ -159,8 +168,10 @@ router.post('/StoreTcDetails', upload.single('image'), async (req, res) => {
     })
     router.post('/getAllSosStudents', async (req, res) => {
         const {admission_no} = req.body
+        console.log(req.body)
         try {
                 await TransferCertificate.find({tc_status:'sos'}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                console.log("gfgfdgfdgfdgsadsadadsa",data)
                 res.send(data)
             })
         }
@@ -170,6 +181,7 @@ router.post('/StoreTcDetails', upload.single('image'), async (req, res) => {
     })
     
     router.put('/UpdateTcData', upload.single('image') ,async (req, res) => {
+        console.log("Yes I Am In")
         const { _id,date_of_tc,date_of_cheque,date_of_application,name,account_no,parents,class_name,section,category,nationality,date_of_admission,dob,house,address,security_deposit,return_mode,bank,tc_no,cheque_no,reason,working_days,present_days,admission_no,is_promoted,promoted_in,result,last_school,result_remark,concession,concession_remark,games_remark,other_remark,conduct,session,tc_status,student_id,academic_id,left_on} = req.body;
         // const image = req.file.path
         TransferCertificate.findByIdAndUpdate({_id},{date_of_tc,date_of_cheque,date_of_application,name,account_no,parents,class_name,section,category,nationality,date_of_admission,dob,house,address,security_deposit,return_mode,bank,tc_no,cheque_no,reason,working_days,present_days,admission_no,is_promoted,promoted_in,result,last_school,result_remark,concession,concession_remark,games_remark,other_remark,conduct,session,tc_status,student_id,academic_id,left_on}, function(err, result){
@@ -182,6 +194,7 @@ router.post('/StoreTcDetails', upload.single('image'), async (req, res) => {
         })
     })
     router.post('/RecoverFromTc', upload.single('image'), async (req, res) => {
+        console.log("yes i am in")
         const { tc_status,_id,academic_id,student_id} = req.body;
         
         Student.findByIdAndUpdate({_id:student_id},{tc_status}, function(err, resultt){
@@ -221,6 +234,7 @@ router.post('/StoreSuspensionalVoucher', upload.single('image'), async (req, res
         else {
             console.log("data is not stored")
         }
+        console.log(SuspensionalFees);
         res.send(SuspensionalFees)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -257,6 +271,7 @@ router.post('/StoreSuspensionalVoucher', upload.single('image'), async (req, res
     
 
     router.put('/SuspensionalFeeData', upload.single('image') ,async (req, res) => {
+        console.log("Yes I Am In")
         const { _id,admission_no,bank,remark,account_no,receipt_date,class_name,amount  } = req.body;
         // const image = req.file.path
         SuspensionalFee.findByIdAndUpdate({_id},{ admission_no,bank,remark,account_no,receipt_date,class_name,amount  }, function(err, result){
@@ -271,6 +286,7 @@ router.post('/StoreSuspensionalVoucher', upload.single('image'), async (req, res
 
     router.delete('/deleteSuspensionalFee', (req, res) => {
         const { _id } = req.body
+        console.log(_id)
         SuspensionalFee.findByIdAndRemove(_id).exec();
         res.send({ res: "Deleted Sucessfully" })
     })
@@ -287,6 +303,7 @@ try {
     else {
         console.log("data is not stored")
     }
+    console.log(Fee_cat);
     res.send(Fee_cat)
 } catch (err) {
     return res.status(422).send(err.message)
@@ -322,6 +339,7 @@ router.post('/StoreFeeSubCatogory', upload.single('image'), async (req, res) => 
         else {
             console.log("data is not stored")
         }
+        console.log(Fee_sub_cat);
         res.send(Fee_sub_cat)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -343,6 +361,7 @@ router.post('/StoreFeeSubCatogory', upload.single('image'), async (req, res) => 
         }
     }) 
     router.put('/updateFeeSubCategory', upload.single('image') ,async (req, res) => {
+        console.log("Yes I Am In")
         const { _id,fee_category,fee_sub_category,amount,month,status } = req.body;
         // const image = req.file.path
         FeeSubCategory.findByIdAndUpdate({_id},{ fee_category,fee_sub_category,amount,month,status }, function(err, result){
@@ -356,6 +375,7 @@ router.post('/StoreFeeSubCatogory', upload.single('image'), async (req, res) => 
     })
     router.delete('/deleteFeeSubCategory', (req, res) => {
         const { _id } = req.body
+        console.log(_id)
         FeeSubCategory.findByIdAndRemove(_id).exec();
         res.send({ res: "Deleted Sucessfully" })
     })
@@ -364,6 +384,7 @@ router.post('/StoreFeeSubCatogory', upload.single('image'), async (req, res) => 
 
 // Start Waiver Category routes
 router.post('/StoreWaiverCategory', upload.single('image'), async (req, res) => {
+    console.log("yes im in");
     const { category} = req.body;
     try {
         const WaiverCat = new WaiverCategory({ category })
@@ -374,6 +395,7 @@ router.post('/StoreWaiverCategory', upload.single('image'), async (req, res) => 
         else {
             console.log("data is not stored")
         }
+        console.log(WaiverCat);
         res.send(WaiverCat)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -398,6 +420,7 @@ router.post('/StoreWaiverCategory', upload.single('image'), async (req, res) => 
 
 // Start Waiver routes
 router.post('/StoreWaiver', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const { FeeCat,FeeSubCat,ExcemptionOrDeduction,CategoryOrGender,WaiverCat,Gender} = req.body;
     try {
         const Waiver_cat = new Waiver({ FeeCat,FeeSubCat,ExcemptionOrDeduction,CategoryOrGender,WaiverCat,Gender })
@@ -408,6 +431,7 @@ router.post('/StoreWaiver', upload.single('image'), async (req, res) => {
         else {
             console.log("data is not stored")
         }
+        console.log(Waiver_cat);
         res.send(Waiver_cat)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -418,6 +442,7 @@ router.post('/StoreWaiver', upload.single('image'), async (req, res) => {
 
 // Start Session routes
 router.post('/StoreSession', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const { from,to,session_code,school_id} = req.body;
     try {
         const Session_data = new Session({from,to,session_code,school_id })
@@ -428,6 +453,7 @@ router.post('/StoreSession', upload.single('image'), async (req, res) => {
         else {
             console.log("data is not stored")
         }
+        console.log(Session_data);
         res.send(Session_data)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -437,6 +463,7 @@ router.post('/StoreSession', upload.single('image'), async (req, res) => {
 
    
     router.post('/getSession', upload.single('image'), async (req, res) => {
+        console.log(req.body);
         const {school_id} = req.body;
         try {
             const data = await Session.find({school_id})
@@ -453,6 +480,7 @@ router.post('/StoreSession', upload.single('image'), async (req, res) => {
     })
     router.delete('/deleteSession', (req, res) => {
         const { _id } = req.body
+        console.log(_id)
         Session.findByIdAndRemove(_id).exec();
         res.send({ res: "Deleted Sucessfully" })
     })
@@ -460,6 +488,8 @@ router.post('/StoreSession', upload.single('image'), async (req, res) => {
 
 // Start Class routes
 router.post('/StoreClass', upload.single('image'),async (req, res) => {
+    console.log("yes im in");
+    console.log(req.body);
     const {class_name,actual_class,description,school_id,session} = req.body;
     try {
         const class_data = new Class({class_name,actual_class,description,school_id,session })
@@ -470,6 +500,7 @@ router.post('/StoreClass', upload.single('image'),async (req, res) => {
         else {
             console.log("data is not stored")
         }
+        console.log(class_data);
         res.send(class_data)
     } catch (err) {
         console.log(err.message.toString().includes('duplicate'))
@@ -496,6 +527,7 @@ router.post('/StoreClass', upload.single('image'),async (req, res) => {
     })
     router.post('/getClass', async (req, res) => {
         const {school_id} = req.body
+        console.log(req.body)
         try {
              await Class.find({school_id}).exec((err,data)=>{
                 res.send(data)
@@ -519,6 +551,7 @@ router.post('/StoreClass', upload.single('image'),async (req, res) => {
     })
     router.delete('/deleteClass', (req, res) => {
         const { _id } = req.body
+        console.log(_id)
         Class.findByIdAndRemove(_id).exec();
         res.send({ res: "Deleted Sucessfully" })
     })
@@ -527,6 +560,7 @@ router.post('/StoreClass', upload.single('image'),async (req, res) => {
 
 // Start Section routes
 router.post('/StoreSection', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {school_id,class_name,section,description} = req.body;
     try {
         const section_data = new Section({school_id,class_name,section,description })
@@ -537,6 +571,7 @@ router.post('/StoreSection', upload.single('image'), async (req, res) => {
         else {
             console.log("data is not stored")
         }
+        console.log(section_data);
         res.send(section_data)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -570,6 +605,7 @@ router.post('/StoreSection', upload.single('image'), async (req, res) => {
     })
     router.delete('/deleteSection', (req, res) => {
         const { _id } = req.body
+        console.log(_id)
         Section.findByIdAndRemove(_id).exec();
         res.send({ res: "Deleted Sucessfully" })
     })
@@ -578,6 +614,7 @@ router.post('/StoreSection', upload.single('image'), async (req, res) => {
 
 // Start Category routes
 router.post('/StoreCategory', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {category,description} = req.body;
     try {
         const category_data = new Category({category,description})
@@ -588,6 +625,7 @@ router.post('/StoreCategory', upload.single('image'), async (req, res) => {
         else {
             console.log("data is not stored")
         }
+        console.log(category_data);
         res.send(category_data)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -609,6 +647,7 @@ router.post('/StoreCategory', upload.single('image'), async (req, res) => {
     })
     router.delete('/deleteCategory', (req, res) => {
         const { _id } = req.body
+        console.log(_id)
         Category.findByIdAndRemove(_id).exec();
         res.send({ res: "Deleted Sucessfully" })
     })
@@ -616,6 +655,7 @@ router.post('/StoreCategory', upload.single('image'), async (req, res) => {
 
 // Start Vehicle routes
 router.post('/StoreVehicle', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {vehicle_type,vehicle_no,root,root_description,driver_name,contact_no,owner_address} = req.body;
     try {
         const Vehicle_data = new Vehicle({vehicle_type,vehicle_no,root,root_description,driver_name,contact_no,owner_address})
@@ -626,6 +666,7 @@ router.post('/StoreVehicle', upload.single('image'), async (req, res) => {
         else {
             console.log("data is not stored")
         }
+        console.log(Vehicle_data);
         res.send(Vehicle_data)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -661,6 +702,7 @@ router.post('/StoreVehicle', upload.single('image'), async (req, res) => {
     })
     router.delete('/deleteVehicle', (req, res) => {
         const { _id } = req.body
+        console.log(_id)
         Vehicle.findByIdAndRemove(_id).exec();
         res.send({ res: "Deleted Sucessfully" })
     })
@@ -669,6 +711,7 @@ router.post('/StoreVehicle', upload.single('image'), async (req, res) => {
 
 // Start Vehicle Type routes
 router.post('/StoreVehicleType', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {vehicle_type} = req.body;
     try {
         const Vehicle_type_data = new VehicleType({vehicle_type})
@@ -679,6 +722,7 @@ router.post('/StoreVehicleType', upload.single('image'), async (req, res) => {
         else {
             console.log("data is not stored")
         }
+        console.log(Vehicle_type_data);
         res.send(Vehicle_type_data)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -712,6 +756,7 @@ router.post('/StoreVehicleType', upload.single('image'), async (req, res) => {
     })
     router.delete('/deleteVehicleType', (req, res) => {
         const { _id } = req.body
+        console.log(_id)
         VehicleType.findByIdAndRemove(_id).exec();
         res.send({ res: "Deleted Sucessfully" })
     })
@@ -719,6 +764,7 @@ router.post('/StoreVehicleType', upload.single('image'), async (req, res) => {
 
 // Bank routes
 router.post('/StoreBankData', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {bank,school_id} = req.body;
     const status=1
     try {
@@ -730,6 +776,7 @@ router.post('/StoreBankData', upload.single('image'), async (req, res) => {
         else {
             console.log("data is not stored")
         }
+        console.log(Bank_data);
         res.send(Bank_data)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -752,6 +799,7 @@ catch (err) {
 
 })
 router.put('/UpdateBankData', upload.single('image') ,async (req, res) => {
+    console.log("Yes I Am In")
     const { _id,bank,school_id} = req.body;
     // const image = req.file.path
     Bank.findByIdAndUpdate({_id},{bank,school_id}, function(err, result){
@@ -765,6 +813,7 @@ router.put('/UpdateBankData', upload.single('image') ,async (req, res) => {
 })
 router.delete('/deleteBank', (req, res) => {
     const { _id } = req.body
+    console.log(_id)
     Bank.findByIdAndRemove(_id).exec();
     res.send({ res: "Deleted Sucessfully" })
 })
@@ -772,6 +821,7 @@ router.delete('/deleteBank', (req, res) => {
 
 // Start Subject routes
 router.post('/StoreSubject', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {school_id,class_name,subject,subject_code,board_code,order_no,description} = req.body;
     try {
         const subject_data = new Subject({school_id,class_name,subject,subject_code,board_code,order_no,description})
@@ -782,6 +832,7 @@ router.post('/StoreSubject', upload.single('image'), async (req, res) => {
         else {
             console.log("data is not stored")
         }
+        console.log(subject_data);
         res.send(subject_data)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -804,6 +855,7 @@ router.post('/StoreSubject', upload.single('image'), async (req, res) => {
         }
     })
     router.put('/updateSubject', upload.single('image') ,async (req, res) => {
+        console.log("Yes I Am In")
         const { _id,school_id,class_name,subject,subject_code,board_code,order_no,description } = req.body;
         // const image = req.file.path
         Subject.findByIdAndUpdate({_id},{school_id,class_name,subject,subject_code,board_code,order_no,description }, function(err, result){
@@ -817,6 +869,7 @@ router.post('/StoreSubject', upload.single('image'), async (req, res) => {
     })
     router.delete('/deleteSubject', (req, res) => {
         const { _id } = req.body
+        console.log(_id)
         Subject.findByIdAndRemove(_id).exec();
         res.send({ res: "Deleted Sucessfully" })
     })
@@ -824,6 +877,7 @@ router.post('/StoreSubject', upload.single('image'), async (req, res) => {
 
 // Start House routes
 router.post('/StoreHouse', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {house_name,color} = req.body;
     try {
         const House_data = new House({house_name,color})
@@ -834,6 +888,7 @@ router.post('/StoreHouse', upload.single('image'), async (req, res) => {
         else {
             console.log("data is not stored")
         }
+        console.log(House_data);
         res.send(House_data)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -855,6 +910,7 @@ router.post('/StoreHouse', upload.single('image'), async (req, res) => {
         }
     })
     router.put('/updateHouse', upload.single('image') ,async (req, res) => {
+        console.log("Yes I Am In")
         const { _id,house_name,color } = req.body;
         // const image = req.file.path
         House.findByIdAndUpdate({_id},{ house_name,color }, function(err, result){
@@ -868,12 +924,14 @@ router.post('/StoreHouse', upload.single('image'), async (req, res) => {
     })
     router.delete('/deleteHouse', (req, res) => {
         const { _id } = req.body
+        console.log(_id)
         House.findByIdAndRemove(_id).exec();
         res.send({ res: "Deleted Sucessfully" })
     })
 // end House routes
 // Start Parent routes
 router.post('/StoreParent', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const image = req.file.path
     const {account_no,father_name,mother_name,father_occu,father_designation,father_annual_income,mother_occu,mother_desgination,mother_annual_income,parent_address,parent_city,parent_state,parent_country,parent_phone,parent_mobile,gaurdian_name,gaurdian_occu,gaurdian_designation,gaurdian_annual_income,gaurdian_address,gaurdian_city,gaurdian_state,gaurdian_country,gaurdian_phone,gaurdian_mobile} = req.body;
     try {
@@ -885,6 +943,7 @@ router.post('/StoreParent', upload.single('image'), async (req, res) => {
         else {
             console.log("data is not stored")
         }
+        console.log(Parent_data);
         res.send(Parent_data)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -919,6 +978,7 @@ router.post('/StoreStudent', upload.fields([{
   },{
     name: 'image4',maxCount: 1
   }]), async (req, res) => {
+    console.log("yes i am in")
     const balance=0
     const {school_id,unique_id,session,date_of_admission,parent,admission_no,security_no,old_admission_no,aadhar_no,class_name,section,subjects,is_start_from_first_class,last_class,category,house,name,sex,dob,nationality,reg_no,roll_no,board_roll_no,last_school,fee_concession,bus_fare_concession,vehicle_no,is_teacher_ward,paid_upto_month,paid_upto_year,last_school_performance,is_full_free_ship,avail_transport,take_computer,no_exempt_security_deposit,ncc,no_exempt_registration,no_exempt_admission,is_repeater,other_details,misc_details,account_no,father_name,mother_name,father_occu,father_designation,father_annual_income,mother_occu,mother_desgination,mother_annual_income,parent_address,parent_city,parent_state,parent_country,parent_per_address,parent_per_city,parent_per_state,parent_per_country,parent_phone,parent_mobile,gaurdian_name,gaurdian_occu,gaurdian_designation,gaurdian_annual_income,gaurdian_address,gaurdian_city,gaurdian_state,gaurdian_country,gaurdian_per_address,gaurdian_per_city,gaurdian_per_state,gaurdian_per_country,gaurdian_phone,gaurdian_mobile,religion} = req.body;
 
@@ -951,12 +1011,14 @@ router.post('/StoreStudent', upload.fields([{
         const Student_data = new Student({image,image2,image3,image4,school_id,tc_status:'0',unique_id,session,date_of_admission,balance,parent,admission_no,security_no,old_admission_no,aadhar_no,class_name,section,subjects,is_start_from_first_class,last_class,category,house,name,sex,dob,nationality,reg_no,roll_no,board_roll_no,last_school,fee_concession,bus_fare_concession,vehicle_no,is_teacher_ward,paid_upto_month,paid_upto_year,last_school_performance,is_full_free_ship,avail_transport,take_computer,no_exempt_security_deposit,ncc,no_exempt_registration,no_exempt_admission,is_repeater,other_details,misc_details,account_no,father_name,mother_name,father_occu,father_designation,father_annual_income,mother_occu,mother_desgination,mother_annual_income,parent_address,parent_city,parent_state,parent_country, parent_per_address,parent_per_city,parent_per_state,parent_per_country,parent_phone,parent_mobile,gaurdian_name,gaurdian_occu,gaurdian_designation,gaurdian_annual_income,gaurdian_address,gaurdian_city,gaurdian_state,gaurdian_country,gaurdian_per_address,gaurdian_per_city,gaurdian_per_state,gaurdian_per_country,gaurdian_phone,gaurdian_mobile,religion})
         await Student_data.save();
         if (Student_data) {
+           await console.log("Student_data")
             const Academic_data = new Academic({student:Student_data._id,tc_status:'0',school_id,unique_id,session,class_name,section,admission_no,account_no})
             Academic_data.save();
         }
         else {
             console.log("data is not stored")
         }
+        console.log(Student_data);
         res.send(Student_data)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -966,7 +1028,8 @@ router.post('/StoreStudent', upload.fields([{
 
         router.post('/getStudent', async (req, res) => {
         const { session,school_id,page_no,page_content_size} = req.body
-        try {   
+        console.log(req.body)
+        try {   console.log(req.page)
                 let {page,size}=req.query;
                 if(!page)
                 {
@@ -979,6 +1042,7 @@ router.post('/StoreStudent', upload.fields([{
                 const limit=parseInt(size);
                 const skip=(page-1)*size;
                 await Academic.find({session,school_id,tc_status:"0"}).limit(limit).skip(skip).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                console.log("gfgfdgfdgfdgsadsadadsa",data)
                 res.send(data)
             })
         }
@@ -991,8 +1055,10 @@ router.post('/StoreStudent', upload.fields([{
     
     router.post('/getStudentAccount_no', async (req, res) => {
         // const { session,school_id} = req.body
+        console.log(req.body+"account no")
         try {
                 await Academic.find({tc_status:"0"}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                console.log("gfgfdgfdgfdgsadsadadsa",data)
                 res.send(data)
             })
         }
@@ -1015,8 +1081,10 @@ router.post('/StoreStudent', upload.fields([{
     // })
     router.post('/singleparentdata', async (req, res) => {
         const { session,account_no} = req.body
+        console.log(req.body)
         try {
                 await Academic.find({account_no,tc_status:'0'}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                console.log("gfgfdgfdgfdgsadsadadsa",data)
                 res.send(data)
             })
         }
@@ -1026,8 +1094,10 @@ router.post('/StoreStudent', upload.fields([{
     })
     router.post('/singleparentdataWithSession', async (req, res) => {
         const { session,account_no} = req.body
+        console.log(req.body)
         try {
                 await Academic.find({account_no,session}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                console.log("gfgfdgfdgfdgsadsadadsa",data)
                 res.send(data)
             })
         }
@@ -1037,8 +1107,10 @@ router.post('/StoreStudent', upload.fields([{
     })
     router.post('/getStudentForUpgrade', async (req, res) => {
         const { session, class_name} = req.body
+        console.log(req.body)
         try {
              await Academic.find({session,class_name,tc_status:"0"}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                console.log("gfgfdgfdgfdgsadsadadsa",data)
                 res.send(data)
             })
         }
@@ -1048,8 +1120,10 @@ router.post('/StoreStudent', upload.fields([{
     })
     router.post('/getStudentForUpgradeSingle', async (req, res) => {
         const { session, class_name,section} = req.body
+        console.log(req.body)
         try {
              await Academic.find({session,class_name,section,tc_status:"0"}).populate('student').sort({ admission_no: -1 }).exec((err,data)=>{
+                console.log("gfgfdgfdgfdgsadsadadsa",data)
                 res.send(data)
             })
         }
@@ -1059,8 +1133,10 @@ router.post('/StoreStudent', upload.fields([{
     })
     router.post('/singlestudentdata', async (req, res) => {
         const { session,admission_no,school_id} = req.body
+        console.log(req.body)
         try {
              await Academic.find({session,admission_no,school_id}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                console.log("gfgfdgfdgfdgsadsadadsa",data)
                 res.send(data)
             })
         }
@@ -1070,8 +1146,10 @@ router.post('/StoreStudent', upload.fields([{
     })
     router.post('/singlestudentdata_with_session', async (req, res) => {
         const { session,admission_no,school_id} = req.body
+        console.log(req.body)
         try {
              await Academic.find({session,admission_no,school_id}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                console.log("gfgfdgfdgfdgsadsadadsa",data)
                 res.send(data)
             })
         }
@@ -1081,8 +1159,10 @@ router.post('/StoreStudent', upload.fields([{
     })
     router.post('/searchByAdmission_noForTc', async (req, res) => {
         const { session,admission_no,school_id} = req.body
+        console.log(req.body)
         try {
              await Academic.find({admission_no,school_id,tc_status:0}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                console.log("gfgfdgfdgfdgsadsadadsa",data)
                 res.send(data)
             })
         }
@@ -1093,9 +1173,11 @@ router.post('/StoreStudent', upload.fields([{
 
       router.post('/GetStudentWithRange', async (req, res) => {
         const { session, FromAdmissionNo,ToAdmissionNo} = req.body
+        console.log(req.body)
         try {
              await Academic.find({session,tc_status:"0",admission_no : {$gte : FromAdmissionNo},
              admission_no : {$lte : ToAdmissionNo}}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                console.log("gfgfdgfdgfdgsadsadadsa",data)
                 res.send(data)
             })
         }
@@ -1120,9 +1202,13 @@ router.post('/StoreStudent', upload.fields([{
     // })
 
     router.post('/singlestudentdata', upload.single('image'),async (req, res) => {
+        console.log("yes im in");
+        console.log(req.body);
         const { admission_no } = req.body;
+        console.log("yes im in"+StudentData);
         try {
           const  studen_upgrade_data=   Academic.insertMany(JSON.parse(StudentData)).then(function(){ 
+            console.log("Data inserted")  // Success 
             res.send(studen_upgrade_data)
             res()
             }).catch(function(error){ 
@@ -1142,6 +1228,7 @@ router.post('/StoreStudent', upload.fields([{
         name: 'image4',maxCount: 1
       }]) ,async (req, res) => {
         const {old_id,_id,unique_id,school_id,session,oldsession,date_of_admission,parent,admission_no,security_no,old_admission_no,aadhar_no,class_name,oldclass_name,section,subjects,is_start_from_first_class,last_class,category,house,name,sex,dob,nationality,reg_no,roll_no,board_roll_no,last_school,balance,fee_concession,bus_fare_concession,vehicle_no,is_teacher_ward,paid_upto_month,paid_upto_year,last_school_performance,is_full_free_ship,avail_transport,take_computer,no_exempt_security_deposit,ncc,no_exempt_registration,no_exempt_admission,is_repeater,other_details,misc_details,account_no,father_name,mother_name,father_occu,father_designation,father_annual_income,mother_occu,mother_desgination,mother_annual_income,parent_address,parent_city,parent_state,parent_country, parent_per_address,parent_per_city,parent_per_state,parent_per_country,parent_phone,parent_mobile,gaurdian_name,gaurdian_occu,gaurdian_designation,gaurdian_annual_income,gaurdian_address,gaurdian_city,gaurdian_state,gaurdian_country,gaurdian_per_address,gaurdian_per_city,gaurdian_per_state,gaurdian_per_country,gaurdian_phone,gaurdian_mobile,religion } = req.body;
+        console.log("Yes I Am In"+oldsession)
         var image,image2,image3,image4
         if(req.files.image != undefined){
         image = req.files.image[0].path;
@@ -1186,10 +1273,12 @@ router.post('/StoreStudent', upload.fields([{
     })
 
     router.post('/StudentStrenght', async (req, res) => {
+        console.log('check student stranght' + req.body.class_name)
         const {session,section,class_name } = req.body;
          if(!class_name){
             try {
                 await Academic.find({session,tc_status:'0'}).populate('student').sort({ class_name: 1 }).exec((err,data)=>{
+                    console.log("hi strainght",data)
                     res.send(data)
                 })
              }
@@ -1201,10 +1290,12 @@ router.post('/StoreStudent', upload.fields([{
             try {
                 if(class_name!="PRE-NUR"){
                 await Academic.find({session,class_name,tc_status:"0"}).populate('student').sort({ section: 1 }).exec((err,data)=>{
+                    console.log("helo strainght",data)
                     res.send(data)
                 })
                 }else{
                     await Academic.find({session,class_name,section,tc_status:"0"}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                        console.log("else straingth",data)
                         res.send(data)
                     })
                 }
@@ -1226,10 +1317,12 @@ router.post('/StoreStudent', upload.fields([{
     })
     
     router.post('/StudentStrenghtForSecurityClassWise', async (req, res) => {
+        console.log('yes im in' + req.body.class_name)
         const {session,section,class_name } = req.body;
          if(class_name == ""){
             try {
                 await Academic.find({session}).populate('student').sort({ class_name: 1 }).exec((err,data)=>{
+                    console.log("gfgfdgfdgfdgsadsadadsa",data)
                     res.send(data)
                 })
              }
@@ -1241,10 +1334,12 @@ router.post('/StoreStudent', upload.fields([{
             try {
                 if(class_name!="PRE-NUR"){
                 await Academic.find({session,class_name}).populate('student').sort({ section: 1 }).exec((err,data)=>{
+                    console.log("gfgfdgfdgfdgsadsadadsa",data)
                     res.send(data)
                 })
                 }else{
                     await Academic.find({session,class_name,section}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                        console.log("gfgfdgfdgfdgsadsadadsa",data)
                         res.send(data)
                     })
                 }
@@ -1256,6 +1351,7 @@ router.post('/StoreStudent', upload.fields([{
         else{
             try {
                 await Academic.find({session,class_name,section}).populate('student').sort({ section: -1 }).exec((err,data)=>{
+                    console.log("gfgfdgfdgfdgsadsadadsa",data)
                     res.send(data)
                 })
              }
@@ -1271,14 +1367,18 @@ router.post('/StoreStudent', upload.fields([{
 
     router.delete('/deleteFeeStructure', (req, res) => {
         const { _id } = req.body
+        console.log(_id)
         FeeStructure.findByIdAndRemove(_id).exec();
         res.send({ res: "Deleted Sucessfully" })
     })
     router.post('/StoreUpgradeStudent', upload.single('image'),async (req, res) => {
-        
+        console.log("yes im in");
+        console.log(req.body);
         const {StudentData} = req.body;
+        console.log("yes im in"+StudentData);
         try {
           const  studen_upgrade_data=   Academic.insertMany(JSON.parse(StudentData)).then(function(){ 
+            console.log("Data inserted")  // Success 
             res.send(studen_upgrade_data)
             }).catch(function(error){ 
             console.log(error)      // Failure 
@@ -1288,12 +1388,15 @@ router.post('/StoreStudent', upload.fields([{
         }
         })
         router.post('/ImportStudent',upload.single('image'),async (req, res) => {
-           
+            console.log("yes im in");
+            // console.log(req.body);
             const {StudentData} = req.body;
+            console.log("yes im in"+ StudentData);
 
             
             try {
               const  Student_data=   Student.insertMany(JSON.parse(StudentData)).then(result=>{ 
+                console.log("Data inserted")  // Success 
                 if (Student_data) {
                     for (var i = 0; i <result.length; i++) {
                      const Academic_data = new Academic({student:result[i]._id,school_id:result[i].school_id,unique_id:result[i].unique_id,session:result[i].session,class_name:result[i].class_name,section:result[i].section,admission_no:result[i].admission_no,account_no:result[i].account_no,tc_status:result[i].tc_status})
@@ -1312,10 +1415,14 @@ router.post('/StoreStudent', upload.fields([{
             }
         })
         router.post('/Importallfees',upload.single('image'),async (req, res) => {
+            console.log("yes im in");
             
             const {AllFeeData} = req.body;
+            console.log(AllFeeData.length);
+            // console.log("yes im in"+ AllFeeData);
             try {
               const  AllFeeDataa=   Receipt.insertMany(JSON.parse(AllFeeData)).then(result=>{ 
+                console.log("Data inserted")  // Success 
                 if (AllFeeDataa) {
                     res.send(AllFeeDataa)
                  }
@@ -1338,6 +1445,7 @@ router.post('/StoreStudent', upload.fields([{
                                 res.send(err);
                                 console.log("delete error "+err)
                             } else {
+                                console.log("delete")
                                 res.send(result);
                             }
                             }
@@ -1358,6 +1466,7 @@ router.post('/StoreStudent', upload.fields([{
 // end Student routes
 // Start Fee Structure routes
     router.post('/StoreFeeStructure', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {session,unique_id,school_id,class_name,section,total_one_time_fee,fees,total_monthly_fee,total_annual_fee,grand_total,annual_terms_fee,examination_fee,admission_fee,registration_fee} = req.body;
     try {
         const Fee_structure_data = new FeeStructure({session,unique_id,school_id,class_name,section,total_one_time_fee,fees,total_monthly_fee,total_annual_fee,grand_total,annual_terms_fee,examination_fee,admission_fee,registration_fee})
@@ -1375,9 +1484,13 @@ router.post('/StoreStudent', upload.fields([{
     }
     })
     router.post('/storeImportStructure', upload.single('image'),async (req, res) => {
+        console.log("yes im in");
+        // console.log(req.body);
         const {AllImportFeeStructure} = req.body;
+        console.log("yes im in"+AllImportFeeStructure);
         try {
           const  studen_upgrade_data=   FeeStructure.insertMany(JSON.parse(AllImportFeeStructure)).then(function(){ 
+            console.log("Data inserted")  // Success 
             res.send(studen_upgrade_data)
             }).catch(function(error){ 
             console.log(error)      // Failure 
@@ -1388,6 +1501,7 @@ router.post('/StoreStudent', upload.fields([{
         })
 
         router.post('/getFeeStructure', upload.single('image'), async (req, res) => {
+            console.log(req.body);
             const {school_id,session} = req.body;
         try {
             const data = await FeeStructure.find({school_id,session})
@@ -1403,7 +1517,9 @@ router.post('/StoreStudent', upload.fields([{
     })
 
     router.post('/FeeAmount', upload.single('image'),async (req, res) => {
+        console.log('yes im in '+req.body.class_name)
         const { class_name,section } = req.body;
+        console.log('yes im in '+class_name+" gfgdf "+section)
         try {
            const data = await FeeStructure.find({ class_name })
             if (data) {
@@ -1417,9 +1533,12 @@ router.post('/StoreStudent', upload.fields([{
         }
     })
     router.post('/FeesClasswise', async (req, res) => {
+        console.log('yes im in' + req.body.class_name)
         const { class_name,session } = req.body;
+         console.log('yes im in fee class wiseee' + class_name, session)
         try {
            const data = await FeeStructure.find({ class_name,session })
+           console.log("chaecking data", data)
             if (data) {
                 res.send(data)
             }
@@ -1430,6 +1549,7 @@ router.post('/StoreStudent', upload.fields([{
         }
     })
      router.put('/updateFeeStructure', upload.single('image') ,async (req, res) => {
+        console.log("Yes I Am In")
         const { _id,session,school_id,class_name,section,total_one_time_fee,fees,total_monthly_fee,total_annual_fee,grand_total,annual_terms_fee,examination_fee,admission_fee,registration_fee } = req.body;
         // const image = req.file.path
         FeeStructure.findByIdAndUpdate({_id},{ session,school_id,class_name,section,total_one_time_fee,fees,total_monthly_fee,total_annual_fee,grand_total,annual_terms_fee,examination_fee,admission_fee,registration_fee }, function(err, result){
@@ -1437,18 +1557,21 @@ router.post('/StoreStudent', upload.fields([{
                 res.send(err)
             }
             else{
+                console.log("Done")
                 res.send(result)
             }
         })
     })
     router.delete('/deleteFeeStructure', (req, res) => {
         const { _id } = req.body
+        console.log(_id)
         FeeStructure.findByIdAndRemove(_id).exec();
         res.send({ res: "Deleted Sucessfully" })
     })
 // end Fee Structure routes
 // Start Fee Receipt routes
 router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
+    console.log("unique_id" + req.body.unique_id);
     const {
         receipt_date, take_computer, fee_concession, is_full_free_ship, is_teacher_ward, fees, defaulter_month, name, ref_receipt_no, last_fee_date, session, admission_no, class_name, section, prospectus_fee, registration_fee, admission_fee,annual_terms_fee,examination_fee, security_fee, account_no, paid_fees, Allfees, paid_month, paid_months, fine, paid_fine, dues_fine, dues_fee, paid_amount, balance, total_one_time_fee, total_monthly_fee, total_annual_fee, grand_total, payment_mode, bank, bank_v_no, check_no, bank_date,previous_year_dues_fee,previous_year_dues_fine,paid_previous_year_fees,paid_previous_year_fine, unique_id
     } = req.body;
@@ -1480,6 +1603,7 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
 });
 
  router.post('/SearchOldfee', async (req, res) => {
+        console.log('yes im in' + req.body.admission_no)
         const { admission_no } = req.body;
         try {
            const data = await Receipt.find({ admission_no }).sort({last_fee_date:1})
@@ -1493,6 +1617,7 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
         }
     })
     router.post('/DefaulterByMonth', async (req, res) => {
+        console.log('yes im in' + req.body.session)
         const { session,DefaulterByMonth,class_name,section } = req.body;
         const defaulter_month =DefaulterByMonth
         var _id=[];
@@ -1538,6 +1663,7 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                     '_id': { $in: _id}
                     // *********** remove session from here example (  },session  )
                 }, function(err, docss){
+                    //  console.log(data);
                      var array3 = docss.filter(function(obj) { return docs.indexOf(obj) == -1; });
                      res.send(array3)
                 }).sort({ section: 1 });
@@ -1545,6 +1671,7 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                 //  res.send(docs)
             }).sort({ section: 1 });
         }else if(class_name !='' && section ==''){
+            console.log("yahi wala hai")
             const data = await Receipt.aggregate(
                 [
                     {$match: { class_name: { $in: [class_name] } }
@@ -1575,10 +1702,12 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                   
                 //     docs_id.push(mongoose.Types.ObjectId(item._id))
                 //  }) 
+                console.log(docs)
                 Receipt.find({
                     '_id': { $in: _id},session
                     // *********** remove session from here example (  },session  )
                 }, function(err, docss){
+                    //  console.log(data);
                      var array3 = docss.filter(function(obj) { return docs.indexOf(obj) == -1; });
                      res.send(array3)
                 }).sort({ section: 1 });
@@ -1616,9 +1745,11 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                     '_id': { $in: _id}
                     // *********** remove session from here example (  },session  )
                 },function(err, docss){
+                    //  console.log(data);
                      var array3 = docss.filter(function(obj) { return docs.indexOf(obj) == -1; });
                      res.send(array3)
                 }).sort({ class_name: 1 });;
+                //  console.log(docs.length);
                 //  res.send(docs)
             }).sort({ class_name: 1 });
         }
@@ -1626,7 +1757,7 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
             //             $lt: new Date(defaulter_month)
             //         } })
             
-        //    (alldata);
+        //    console.log(alldata);
         //    console.log(data.length);
             // if(class_name ==''){
             //     const data = await Receipt.find({ session, last_fee_date: { 
@@ -1655,12 +1786,12 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
     const juniorValidClassRanges = ["KG", "PG", "NURSERY", "I", "II", "III", "IV", "V"];
     const seniorValidClassRanges = ["VI", "VII", "VIII", "IX", "X", "XI", "XII"];
     
-    router.post('/AllReceiptsCurrentMonth', async (req, res) => {
-        const { class_name, session, date } = req.body;
+    router.post('/AllReceiptsCustomDateRange', async (req, res) => {
+        const { class_name, session, startDate, endDate } = req.body;
     
         try {
             let validClassRanges;
-            if (class_name.toLowerCase() === "kg-to-v") {
+            if (class_name.toLowerCase() === "pg-to-v") {
                 validClassRanges = juniorValidClassRanges;
             } else if (class_name.toLowerCase() === "vi-to-xii") {
                 validClassRanges = seniorValidClassRanges;
@@ -1669,39 +1800,35 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                 return;
             }
     
-            const selectedDate = new Date(date);
-            const selectedSession = session;
+            const startCustomDate = new Date(startDate);
+            const endCustomDate = new Date(endDate);
     
+            console.log("Start Date:", startCustomDate.toISOString().split('T')[0]);
+            console.log("End Date:", endCustomDate.toISOString().split('T')[0]);
     
-            const isCurrentMonth = selectedDate.getMonth() + 1 === currentDate.getMonth() + 1;
-            const isCurrentSession = selectedSession === `${currentDate.getFullYear() - 1}-${currentDate.getFullYear()}`;
+            const query = {
+                class_name: { $in: validClassRanges },
+                receipt_date: {
+                    $gte: startCustomDate.toISOString().split('T')[0],
+                    $lte: endCustomDate.toISOString().split('T')[0]
+                },
+                session: session  // Include session in the query
+            };
     
+            console.log("Query:", query);
     
-            if (isCurrentMonth && isCurrentSession) {
-                const startOfMonth = new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), 1);
-                const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0, 23, 59, 59);
+            const receipts = await Receipt.find(query).sort({ class_name: 1 });
     
+            console.log("Result:", receipts);
     
-                const query = {
-                    class_name: { $in: validClassRanges },
-                    receipt_date: {
-                        $gte: startOfMonth.toISOString().split('T')[0],
-                        $lte: endOfMonth.toISOString().split('T')[0]
-                    }
-                };
-    
-    
-                const receipts = await Receipt.find(query).sort({ class_name: 1 });
-    
-                res.send(receipts);
-            } else {
-                res.status(400).send({ error: "Invalid date or session. Please provide the current month and session." });
-            }
+            res.send(receipts);
         } catch (err) {
             console.error("Error:", err);
             res.status(500).send({ error: "Internal server error." });
         }
     });
+    
+    
     
     router.get('/getFeeReceipt', async (req, res) => {
         try {
@@ -1717,9 +1844,11 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
         }
     })
     router.post('/getFeeReceipt', async (req, res) => {
+        console.log('yes im in' + req.body.session)
         const { session } = req.body;
             try {
                 const dataa = await Receipt.findOne({ session }).sort({ _id: -1 }).exec((err,data)=>{
+                    console.log("gfgfdgfdgfdgsadsadadsa",data)
                     
                     if(data !=null){
                     res.send(data)
@@ -1738,6 +1867,7 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
        
     })
     router.post('/getFeeSummary', async (req, res) => {
+        console.log('yes im in fee summary' + req.body.summaryFrom)
         const { bank,summaryFrom,summaryTo} = req.body;
         if(bank != ""){
             try {
@@ -1745,6 +1875,7 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                     $gte: summaryFrom,
                     $lte: summaryTo
                 },bank}).sort({ receipt_date: 1 }).exec((err,data)=>{
+                    console.log("gfgfdgfdgfdgsadsadadsa",data)
                     
                     if(data !=null){
                     res.send(data)
@@ -1764,6 +1895,7 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
                         $gte: summaryFrom,
                         $lte: summaryTo
                     }}).sort({ receipt_date: 1 }).exec((err,data)=>{
+                        console.log("gfgfdgfdgfdgsadsadadsa",data)
                         
                         if(data !=null){
                         res.send(data)
@@ -1781,9 +1913,11 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
     })
     
     router.post('/getadmission_no', async (req, res) => {
+        console.log('yes im in' + req.body.session)
         const { session } = req.body;
             try {
                 const dataa = await Student.findOne({}).sort({ _id: -1 }).exec((err,data)=>{
+                    console.log("gfgfdgfdgfdgsadsadadsa",data)
                     
                     if(data !=null){
                     res.send(data)
@@ -1820,6 +1954,7 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
     // })
     router.patch('/UpdateBalance',upload.single('image'),async (req, res) => {    
         const { _id,balance,paid_upto_month } = req.body;
+        console.log(req.body)
         Student.findByIdAndUpdate({_id},{balance,paid_upto_month}, function(err, result){
             if(err){
                 res.send(err)
@@ -1831,10 +1966,12 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
     })
     router.delete('/DeleteReceipt', (req, res) => {
         const { _id } = req.body
+        console.log(_id)
         Receipt.findByIdAndRemove(_id).exec();
         res.send({ res: "Deleted Sucessfully" })
     })
     router.post('/VoucherByDate', async (req, res) => {
+        console.log('yes im in' + req.body.Bank)
         const { Bank,VoucherDate } = req.body;
         const receipt_date = VoucherDate
         const bank = Bank
@@ -1864,6 +2001,7 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
        
     })
     router.post('/SuspiciousVoucherByDate', async (req, res) => {
+        console.log('yes im in' + req.body.Bank)
         const { Bank,VoucherDate } = req.body;
         const receipt_date = VoucherDate
         const bank = Bank
@@ -1894,6 +2032,7 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
     })
 
     router.post('/printvoucherbydate', async (req, res) => {
+        console.log('yes im in' + req.body.Bank)
         const {VoucherDate,Bank } = req.body;
         const receipt_date = VoucherDate
         const bank = Bank
@@ -1926,6 +2065,7 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
     })
 
     router.post('/VoucherInDetail', async (req, res) => {
+        console.log('yes im in' + req.body.Bank)
         const { Bank,VoucherDate } = req.body;
         const receipt_date = VoucherDate
         const bank = Bank
@@ -1955,6 +2095,7 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
        
     })
     router.post('/suspiciousVoucher', async (req, res) => {
+        console.log('yes im in' + req.body.Bank)
         const { Bank,VoucherDate,class_name} = req.body;
         const receipt_date = VoucherDate
         const bank = Bank
@@ -1986,6 +2127,7 @@ router.post('/StoreReceipt', upload.single('image'), async (req, res) => {
     })
     
     router.post('/VoucherByClass', async (req, res) => {
+        console.log('yes im in' + req.body.Bank)
         const { Bank,VoucherDate,class_name} = req.body;
         const receipt_date = VoucherDate
         const bank = Bank
@@ -2030,6 +2172,7 @@ router.post('/StoreFine', upload.single('image'), async (req, res) => {
         else {
             console.log("data is not stored")
         }
+        console.log(Fine_data);
         res.send(Fine_data)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -2051,6 +2194,7 @@ router.post('/StoreFine', upload.single('image'), async (req, res) => {
         }
     }) 
     router.put('/updateFine', upload.single('image') ,async (req, res) => {
+        console.log("Yes I Am In")
         const { _id,category,fine_date,amount } = req.body;
         // const image = req.file.path
         Fine.findByIdAndUpdate({_id},{ category,fine_date,amount }, function(err, result){
@@ -2066,10 +2210,14 @@ router.post('/StoreFine', upload.single('image'), async (req, res) => {
 
     // Defaulter Maker Routes
     router.post('/ImportallDefaulter',upload.single('image'),async (req, res) => {
+        console.log("yes im in");
         
         const {AllDefaulterData} = req.body;
+        console.log(AllDefaulterData.length);
+        // console.log("yes im in"+ AllDefaulterData);
         try {
           const  AllDefaulterDataa=   DefaulterMaker.insertMany(JSON.parse(AllDefaulterData)).then(result=>{ 
+            console.log("Data inserted")  // Success 
             if (AllDefaulterDataa) {
                 res.send(AllDefaulterDataa)
              }
@@ -2081,6 +2229,7 @@ router.post('/StoreFine', upload.single('image'), async (req, res) => {
 
     router.post('/GetDefaulterMoneySingleStudent', async (req, res) => {
         const { session,admission_no} = req.body
+        console.log(req.body)
         try {
             const data = await DefaulterMaker.find({admission_no,session})
             if (data) {
@@ -2097,6 +2246,7 @@ router.post('/StoreFine', upload.single('image'), async (req, res) => {
     })
    
     router.put('/UpdateSpeceficPreviousSessionAmount', upload.single('image'), async (req, res) => {
+        console.log(req.body);
         const {_id,TotalPreviousBalance,name} = req.body;
         try {
             if(name !=""){
@@ -2126,6 +2276,7 @@ router.post('/StoreFine', upload.single('image'), async (req, res) => {
 
     // Employe routes
 router.post('/StoreEmployee', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {name,dob,doa,sex,designation,pay_level} = req.body;
     try {
         const EmployeeData = new Employee({name,dob,doa,sex,designation,pay_level})
@@ -2136,6 +2287,7 @@ router.post('/StoreEmployee', upload.single('image'), async (req, res) => {
         else {
             console.log("data is not stored")
         }
+        console.log(EmployeeData);
         res.send(EmployeeData)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -2146,6 +2298,7 @@ router.post('/getEmployees', async (req, res) => {
     const { school_id} = req.body
 try {
     await Employee.find().populate('pay_level').sort({ _id: -1 }).exec((err, data) => {
+        console.log("gfgfdgfdgfdgsadsadadsa", data)
         res.send(data)
     })
     
@@ -2162,6 +2315,7 @@ catch (err) {
 
 
 router.post('/StorePayType', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {name,category,description} = req.body;
     try {
         const PayTypeData = new PayType({name,category,description})
@@ -2172,6 +2326,7 @@ router.post('/StorePayType', upload.single('image'), async (req, res) => {
         else {
             console.log("data is not stored")
         }
+        console.log(PayTypeData);
         res.send(PayTypeData)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -2195,6 +2350,7 @@ catch (err) {
 })
 
 router.put('/UpdatePayType', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {_id,name,category,description} = req.body;
     try {
         PayType.findByIdAndUpdate({_id},{ name,category,description }, function(err, result){
@@ -2213,6 +2369,7 @@ router.put('/UpdatePayType', upload.single('image'), async (req, res) => {
 
 router.delete('/DeletePayType', (req, res) => {
     const { _id } = req.body
+    console.log(_id)
     PayType.findByIdAndRemove(_id).exec();
     res.send({ res: "Deleted Sucessfully" })
 })
@@ -2223,6 +2380,7 @@ router.delete('/DeletePayType', (req, res) => {
 
 
 router.post('/StorePayCategory', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {name,description} = req.body;
     try {
         const PaycatData = new PayCategory({name,description})
@@ -2233,6 +2391,7 @@ router.post('/StorePayCategory', upload.single('image'), async (req, res) => {
         else {
             console.log("data is not stored")
         }
+        console.log(PaycatData);
         res.send(PaycatData)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -2256,6 +2415,7 @@ catch (err) {
 })
 
 router.put('/UpdatePayCategory', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {_id,name,description} = req.body;
     try {
         PayCategory.findByIdAndUpdate({_id},{ name,description }, function(err, result){
@@ -2274,6 +2434,7 @@ router.put('/UpdatePayCategory', upload.single('image'), async (req, res) => {
 
 router.delete('/DeletePayCategory', (req, res) => {
     const { _id } = req.body
+    console.log(_id)
     PayCategory.findByIdAndRemove(_id).exec();
     res.send({ res: "Deleted Sucessfully" })
 })
@@ -2284,6 +2445,7 @@ router.delete('/DeletePayCategory', (req, res) => {
 
 
 router.post('/StoreEmployeeDesignation', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {name,description} = req.body;
     try {
         const DesignationData = new Designation({name,description})
@@ -2294,6 +2456,7 @@ router.post('/StoreEmployeeDesignation', upload.single('image'), async (req, res
         else {
             console.log("data is not stored")
         }
+        console.log(DesignationData);
         res.send(DesignationData)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -2317,6 +2480,7 @@ catch (err) {
 })
 
 router.put('/UpdateDesignation', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {_id,name,description} = req.body;
     try {
         Designation.findByIdAndUpdate({_id},{ name,description }, function(err, result){
@@ -2335,6 +2499,7 @@ router.put('/UpdateDesignation', upload.single('image'), async (req, res) => {
 
 router.delete('/DeleteDesignation', (req, res) => {
     const { _id } = req.body
+    console.log(_id)
     Designation.findByIdAndRemove(_id).exec();
     res.send({ res: "Deleted Sucessfully" })
 })
@@ -2345,6 +2510,7 @@ router.delete('/DeleteDesignation', (req, res) => {
 
 
 router.post('/StorePayScaleType', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {name,description} = req.body;
     try {
         const PayScaleTypeData = new PayScaleType({name,description})
@@ -2355,6 +2521,7 @@ router.post('/StorePayScaleType', upload.single('image'), async (req, res) => {
         else {
             console.log("data is not stored")
         }
+        console.log(PayScaleTypeData);
         res.send(PayScaleTypeData)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -2377,6 +2544,7 @@ catch (err) {
 })
 
 router.put('/UpdatePayScaleType', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {_id,name,description} = req.body;
     try {
         PayScaleType.findByIdAndUpdate({_id},{ name,description }, function(err, result){
@@ -2395,6 +2563,7 @@ router.put('/UpdatePayScaleType', upload.single('image'), async (req, res) => {
 
 router.delete('/DeletePayScaleType', (req, res) => {
     const { _id } = req.body
+    console.log(_id)
     PayScaleType.findByIdAndRemove(_id).exec();
     res.send({ res: "Deleted Sucessfully" })
 })
@@ -2406,15 +2575,18 @@ router.delete('/DeletePayScaleType', (req, res) => {
 
 
 router.post('/StorePayScale', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {PayScaleName,PayScale} = req.body;
     try {
         const PayScaleData = new PayScaleTABLE({PayScaleName,PayScale})
         await PayScaleData.save();
         if (PayScaleData) {
+            console.log("PayScaleData")
         }
         else {
             console.log("data is not stored")
         }
+        console.log(PayScaleData);
         res.send(PayScaleData)
     } catch (err) {
         return res.status(422).send(err.message)
@@ -2437,6 +2609,7 @@ catch (err) {
 })
 
 router.put('/UpdatePayScale', upload.single('image'), async (req, res) => {
+    console.log(req.body);
     const {_id,PayScaleName,PayScale} = req.body;
     try {
         PayScaleTABLE.findByIdAndUpdate({_id},{ PayScaleName,PayScale }, function(err, result){
@@ -2455,6 +2628,7 @@ router.put('/UpdatePayScale', upload.single('image'), async (req, res) => {
 
 router.delete('/DeletePayScale', (req, res) => {
     const { _id } = req.body
+    console.log(_id)
     PayScaleTABLE.findByIdAndRemove(_id).exec();
     res.send({ res: "Deleted Sucessfully" })
 })
@@ -2465,9 +2639,11 @@ router.delete('/DeletePayScale', (req, res) => {
 router.patch('/UpdateSubjects',upload.single('image'),async(req,res)=>{ 
        
     const { IdArray,subjects } = req.body;
+    // console.log(req.body)
     try{
     JSON.parse(IdArray).map(async(item,index)=>{
         var _id =item
+        // console.log(subjects)
         await Student.findByIdAndUpdate({_id},{subjects}, function(err, result){
             if(err){
                 console.log(err)
@@ -2475,6 +2651,7 @@ router.patch('/UpdateSubjects',upload.single('image'),async(req,res)=>{
             if(JSON.parse(IdArray).length-1==index){
                 res.send(result)
             }
+            // console.log(result)
            
         })
     })
@@ -2493,10 +2670,12 @@ router.patch('/UpdateSubjects',upload.single('image'),async(req,res)=>{
 
 //  Fee Recipt By Range Routes
 router.post('/GetFeeReceiptByRange', async (req, res) => {
+    console.log('yes im in' + req.body.FromReceiptNo)
     const {session,FromReceiptNo,ToReceiptNo } = req.body;
      
         try {
             await Receipt.find({session,receipt_no: { $lte: parseInt(ToReceiptNo)},receipt_no: { $gte: parseInt(FromReceiptNo) }}).exec((err,data)=>{
+                console.log("gfgfdgfdgfdgsadsadadsa",data)
                 res.send(data)
             })
          }
@@ -2506,12 +2685,14 @@ router.post('/GetFeeReceiptByRange', async (req, res) => {
     
 })
 router.patch('/UpdateFeeReceiptByRange',upload.single('image'),async(req,res)=>{ 
+    console.log("Yes I am In "+req.body.bank)
     const { IdArray,bank,receipt_date } = req.body;
     
     if(bank=="" && receipt_date!="" ){
         try{
             JSON.parse(IdArray).map(async(item,index)=>{
                 var _id =item
+                // console.log(subjects)
                 await Receipt.findByIdAndUpdate({_id},{receipt_date}, function(err, result){
                     if(err){
                         console.log(err)
@@ -2519,6 +2700,7 @@ router.patch('/UpdateFeeReceiptByRange',upload.single('image'),async(req,res)=>{
                     if(JSON.parse(IdArray).length-1==index){
                         res.send(result)
                     }
+                    // console.log(result)
                    
                 })
             })
@@ -2531,6 +2713,7 @@ router.patch('/UpdateFeeReceiptByRange',upload.single('image'),async(req,res)=>{
         try{
             JSON.parse(IdArray).map(async(item,index)=>{
                 var _id =item
+                // console.log(subjects)
                 await Receipt.findByIdAndUpdate({_id},{bank}, function(err, result){
                     if(err){
                         console.log(err)
@@ -2538,6 +2721,7 @@ router.patch('/UpdateFeeReceiptByRange',upload.single('image'),async(req,res)=>{
                     if(JSON.parse(IdArray).length-1==index){
                         res.send(result)
                     }
+                    // console.log(result)
                    
                 })
             })
@@ -2551,6 +2735,7 @@ router.patch('/UpdateFeeReceiptByRange',upload.single('image'),async(req,res)=>{
         try{
             JSON.parse(IdArray).map(async(item,index)=>{
                 var _id =item
+                // console.log(subjects)
                 await Receipt.findByIdAndUpdate({_id},{bank,receipt_date}, function(err, result){
                     if(err){
                         console.log(err)
@@ -2558,6 +2743,7 @@ router.patch('/UpdateFeeReceiptByRange',upload.single('image'),async(req,res)=>{
                     if(JSON.parse(IdArray).length-1==index){
                         res.send(result)
                     }
+                    // console.log(result)
                    
                 })
             })
@@ -2574,11 +2760,13 @@ router.patch('/UpdateFeeReceiptByRange',upload.single('image'),async(req,res)=>{
 
 router.post('/getStudentCount', async (req, res) => {
     const { session,school_id} = req.body
+    console.log(req.body)
     try {
         Academic.count({session,school_id}, function(err, result) {
             if (err) {
               console.log(err);
             } else {
+                console.log(result)
                 res.send({"count":result})
             }
           });
@@ -2591,6 +2779,7 @@ router.post('/getStudentCount', async (req, res) => {
 //  Security Register All Routes
 
 router.post('/SearchOldfeeSecurityRegisterAll', async (req, res) => {
+    console.log('yes im in' + req.body.admission_no)
     const { admission_no } = req.body;
     try {
        const data = await Receipt.find({ admission_no,security_fee:{ $ne: "" } }).sort({last_fee_date:1})
@@ -2607,9 +2796,11 @@ router.post('/SearchOldfeeSecurityRegisterAll', async (req, res) => {
  router.post('/StudentStrenghtForSecurityALL', async (req, res) => {
     var StudentWithFees=[] 
     var IndexCounter=0     
+    console.log("yes  am in")      
         const { session} = req.body;
             try {                
                 await Student.find().sort({ admission_no: 1 }).exec((err,dataa)=>{
+                    console.log("gfgfdgfdgfdgsadsadadsa",dataa)
                     dataa.map((item,index)=>{
                         var admission_no= item.admission_no
                         try {
@@ -2632,10 +2823,12 @@ router.post('/SearchOldfeeSecurityRegisterAll', async (req, res) => {
                                                     if( !JSON.stringify(StudentWithFees).includes(item.admission_no+item.account_no+item.class_name)){
                                                       StudentWithFees.push({"is_full_free_ship":item.is_full_free_ship,"name":item.name,"name":item.name,"admission_no":admission_no,"account_no":item.account_no,"security_no":item.security_no,"doa":item.date_of_admission,"father_name":item.father_name,"mother_name":item.mother_name,'security_deposit':security_deposit,"unique_key":item.admission_no+item.account_no+item.class_name,"refund":TcData.security_deposit,"tc_no":TcData.tc_no,"cheque_no":TcData.cheque_no,"cheque_date":TcData.date_of_tc})
                                                     }
+                                                    console.log(index)
                                                     if(dataa.length-1==IndexCounter){
                                                         res.send(StudentWithFees)
                                                     }
                                                   }else{
+                                                    console.log(index)
                                                     IndexCounter=IndexCounter+1
                                                     if( !JSON.stringify(StudentWithFees).includes(item.admission_no+item.account_no+item.class_name)){
                                                         StudentWithFees.push({"is_full_free_ship":item.is_full_free_ship,"name":item.name,"name":item.name,"admission_no":admission_no,"account_no":item.account_no,"security_no":item.security_no,"doa":item.date_of_admission,"father_name":item.father_name,"mother_name":item.mother_name,'security_deposit':security_deposit,"unique_key":item.admission_no+item.account_no+item.class_name,"refund":0,"tc_no":'',"cheque_no":'',"cheque_date":''})
@@ -2657,6 +2850,7 @@ router.post('/SearchOldfeeSecurityRegisterAll', async (req, res) => {
                                        if( !JSON.stringify(StudentWithFees).includes(item.admission_no+item.account_no+item.class_name)){
                           
                                          StudentWithFees.push({"is_full_free_ship":item.is_full_free_ship,"name":item.name,"name":item.name,"admission_no":admission_no,"account_no":item.account_no,"security_no":item.security_no,"doa":item.date_of_admission,"father_name":item.father_name,"mother_name":item.mother_name,'security_deposit':security_deposit,"unique_key":item.admission_no+item.account_no+item.class_name,"refund":0,"tc_no":'',"cheque_no":'',cheque_date:''})
+                                         console.log(index)
                              }
                                         if(dataa.length-1==IndexCounter){
                                             res.send(StudentWithFees)
@@ -2664,6 +2858,7 @@ router.post('/SearchOldfeeSecurityRegisterAll', async (req, res) => {
                                      } 
                                     }
                                     else{
+                                        console.log(index)
                                         IndexCounter=IndexCounter+1
                                         if(dataa.length-1==IndexCounter){
                                             res.send(StudentWithFees)
@@ -2687,6 +2882,7 @@ router.post('/SearchOldfeeSecurityRegisterAll', async (req, res) => {
                     //    }
 
                     })
+                    // console.log("Array Data "+JSON.stringify(StudentWithFees))
                 })
                 
              }
@@ -2791,14 +2987,17 @@ router.post('/SearchOldfeeSecurityRegisterAll', async (req, res) => {
 router.post('/StudentStrenghtForDefaulter', async (req, res) => {
     var studentArray=[]
     var studentArrayWithFee=[]
+    console.log('yes im in' + req.body.class_name)
     const {session,section,class_name,DefaulterByMonth} = req.body;
      if(class_name == ""){
         var StudenCount=0
         try {
             Academic.find({session,tc_status:'0'}).populate('student').sort({ class_name: 1 }).exec((err,StudentData)=>{
+               console.log("gfgfdgfdgfdgsadsadadsa",StudentData.length)
                
                StudentData.map(async(item,index)=>{
                    var admission_no= item.admission_no
+                   console.log("student Index No. = "+index+" , "+item.admission_no)
                    try {
                        await Receipt.find({ admission_no }).sort({last_fee_date:1}).exec(async(err,FeesData)=>{
                           
@@ -2817,6 +3016,7 @@ router.post('/StudentStrenghtForDefaulter', async (req, res) => {
                                    b=b-1
                                    var previousSession =a+"-"+b
                                    var previousSessionBalance=0
+                                //    console.log("previous session "+item.admission_no)
                                  await  DefaulterMaker.find({admission_no,session:previousSession}).exec(async(err,DefaulterData)=>{
                                    
 
@@ -2824,16 +3024,19 @@ router.post('/StudentStrenghtForDefaulter', async (req, res) => {
                                                if( !JSON.stringify(studentArray).includes(item.admission_no+item.account_no+item.class_name)){
 
                                                 StudenCount=StudenCount+1
+                                                console.log("Defaulter Fees data "+StudenCount)
 
                                                   await studentArray.push({"is_full_free_ship":item.student.is_full_free_ship,"paid_upto_month_status":true,"class_name":item.class_name,"section":item.section,"name":item.student.name,"admission_no":item.admission_no,"account_no":item.account_no,"fee_concession":item.student.fee_concession,"paid_upto_month":last_date,"student_balance":previousSessionBalance,"unique_key":item.admission_no+item.account_no+item.class_name})
 
                                                   if(StudentData.length == StudenCount){
+                                                    await console.log("Actual student Array lenght "+studentArray.length)
                                                     var feestructureCount=0                                
                                                      var studetntArrayLength= studentArray.length-1
                                                   await studentArray.map(async(it,ind)=>{
                                                         try {
                                                             var class_nameforfees=it.class_name
                                                             await FeeStructure.find({ class_name:class_nameforfees,session }).exec(async(err,FeesClassWise)=>{
+                                                                console.log("student Array data "+it.admission_no+" Session "+session)
                                                                 if(FeesClassWise[0] !=undefined){
                                                                     //  (FeesClassWise[0].fees)})
                                                                     if(!JSON.stringify(studentArrayWithFee).includes(it.admission_no+it.account_no+it.class_name+it.name)){
@@ -2843,6 +3046,7 @@ router.post('/StudentStrenghtForDefaulter', async (req, res) => {
                                                                    await studentArrayWithFee.push({"is_full_free_ship":it.is_full_free_ship,"paid_upto_month_status":it.paid_upto_month_status,"student_balance":it.student_balance,"unique_key":it.admission_no+it.account_no+it.class_name+it.name,"class_name":it.class_name,"section":it.section,"name":it.name,"admission_no":it.admission_no,"account_no":it.account_no,"fee_concession":it.fee_concession,"Allfees":FeesClassWise[0].fees,"paid_upto_month":it.paid_upto_month})
                                                                     }
                                                              }
+                                                             console.log("studentArraydatalength  "+studetntArrayLength+" indexx "+(ind+1))
                                                              if(studentArray.length==feestructureCount){
                                                                  res.send(studentArrayWithFee)
                                                             }
@@ -2867,15 +3071,19 @@ router.post('/StudentStrenghtForDefaulter', async (req, res) => {
                    
                                  if(Moment(FeesData[FeesData.length-1].last_fee_date).format("MM-YYYY") > Moment(DefaulterByMonth).format("MM-YYYY")){
                                    if( !JSON.stringify(studentArray).includes(item.admission_no+item.account_no+item.class_name)){
+                                    console.log("Fees data "+StudenCount)
                                     StudenCount=StudenCount+1
+                                    // console.log("date is greater "+item.admission_no)
                                     await studentArray.push({"is_full_free_ship":item.student.is_full_free_ship,"paid_upto_month_status":false,"class_name":item.class_name,"section":item.section,"name":item.student.name,"admission_no":admission_no,"account_no":item.account_no,"fee_concession":item.student.fee_concession,"paid_upto_month":last_date,"student_balance":0,"unique_key":item.admission_no+item.account_no+item.class_name})
                                     if(StudentData.length == StudenCount){
+                                        await console.log("Actual student Array lenght "+studentArray.length)
                                         var feestructureCount=0                                
                                          var studetntArrayLength= studentArray.length-1
                                       await studentArray.map(async(it,ind)=>{
                                             try {
                                                 var class_nameforfees=it.class_name
                                                 await FeeStructure.find({ class_name:class_nameforfees,session }).exec(async(err,FeesClassWise)=>{
+                                                    console.log("student Array data "+it.admission_no+" Session "+session)
                                                     if(FeesClassWise[0] !=undefined){
                                                         //  (FeesClassWise[0].fees)})
                                                         if(!JSON.stringify(studentArrayWithFee).includes(it.admission_no+it.account_no+it.class_name+it.name)){
@@ -2885,6 +3093,7 @@ router.post('/StudentStrenghtForDefaulter', async (req, res) => {
                                                        await studentArrayWithFee.push({"is_full_free_ship":it.is_full_free_ship,"paid_upto_month_status":it.paid_upto_month_status,"student_balance":it.student_balance,"unique_key":it.admission_no+it.account_no+it.class_name+it.name,"class_name":it.class_name,"section":it.section,"name":it.name,"admission_no":it.admission_no,"account_no":it.account_no,"fee_concession":it.fee_concession,"Allfees":FeesClassWise[0].fees,"paid_upto_month":it.paid_upto_month})
                                                         }
                                                  }
+                                                 console.log("studentArraydatalength  "+studetntArrayLength+" indexx "+(ind+1))
                                                  if(studentArray.length==feestructureCount){
                                                      res.send(studentArrayWithFee)
                                                 }
@@ -2900,16 +3109,20 @@ router.post('/StudentStrenghtForDefaulter', async (req, res) => {
                                  }else{
                                     
                                  if( !JSON.stringify(studentArray).includes(item.admission_no+item.account_no+item.class_name)){
+                                    console.log("Fees data "+StudenCount)
                                     StudenCount=StudenCount+1
+                                    // console.log("date is lessthen "+item.admission_no)
                                   await studentArray.push({"is_full_free_ship":item.student.is_full_free_ship,"paid_upto_month_status":true,"class_name":item.class_name,"section":item.section,"name":item.student.name,"admission_no":admission_no,"account_no":item.account_no,"fee_concession":item.student.fee_concession,"paid_upto_month":last_date,"student_balance":FeesData[FeesData.length-1].balance,"unique_key":item.admission_no+item.account_no+item.class_name})
 
                                   if(StudentData.length == StudenCount){
+                                    await console.log("Actual student Array lenght "+studentArray.length)
                                     var feestructureCount=0                                
                                      var studetntArrayLength= studentArray.length-1
                                   await studentArray.map(async(it,ind)=>{
                                         try {
                                             var class_nameforfees=it.class_name
                                             await FeeStructure.find({ class_name:class_nameforfees,session }).exec(async(err,FeesClassWise)=>{
+                                                console.log("student Array data "+it.admission_no+" Session "+session)
                                                 if(FeesClassWise[0] !=undefined){
                                                     //  (FeesClassWise[0].fees)})
                                                     if(!JSON.stringify(studentArrayWithFee).includes(it.admission_no+it.account_no+it.class_name+it.name)){
@@ -2919,6 +3132,7 @@ router.post('/StudentStrenghtForDefaulter', async (req, res) => {
                                                    await studentArrayWithFee.push({"is_full_free_ship":it.is_full_free_ship,"paid_upto_month_status":it.paid_upto_month_status,"student_balance":it.student_balance,"unique_key":it.admission_no+it.account_no+it.class_name+it.name,"class_name":it.class_name,"section":it.section,"name":it.name,"admission_no":it.admission_no,"account_no":it.account_no,"fee_concession":it.fee_concession,"Allfees":FeesClassWise[0].fees,"paid_upto_month":it.paid_upto_month})
                                                     }
                                              }
+                                             console.log("studentArraydatalength  "+studetntArrayLength+" indexx "+(ind+1))
                                              if(studentArray.length==feestructureCount){
                                                  res.send(studentArrayWithFee)
                                             }
@@ -2935,18 +3149,23 @@ router.post('/StudentStrenghtForDefaulter', async (req, res) => {
                                }
                              }else{
                                
+                                // console.log("Undefine Fees data "+item.admission_no)
                                if( !JSON.stringify(studentArray).includes(item.admission_no+item.account_no+item.class_name)){
 
+                                console.log("Undefine Fees data "+StudenCount)
                                 StudenCount=StudenCount+1
+                                // console.log("date is undefined "+item.admission_no)
                                await  studentArray.push({"is_full_free_ship":item.student.is_full_free_ship,"paid_upto_month_status":false,"class_name":item.class_name,"section":item.section,"name":item.student.name,"admission_no":admission_no,"account_no":item.account_no,"fee_concession":item.student.fee_concession,"paid_upto_month":item.student.paid_upto_month,"student_balance":0,"unique_key":item.admission_no+item.account_no+item.class_name})
 
                                if(StudentData.length == StudenCount){
+                                await console.log("Actual student Array lenght "+studentArray.length)
                                 var feestructureCount=0                                
                                  var studetntArrayLength= studentArray.length-1
                               await studentArray.map(async(it,ind)=>{
                                     try {
                                         var class_nameforfees=it.class_name
                                         await FeeStructure.find({ class_name:class_nameforfees,session }).exec(async(err,FeesClassWise)=>{
+                                            console.log("student Array data "+it.admission_no+" Session "+session)
                                             if(FeesClassWise[0] !=undefined){
                                                 //  (FeesClassWise[0].fees)})
                                                 if(!JSON.stringify(studentArrayWithFee).includes(it.admission_no+it.account_no+it.class_name+it.name)){
@@ -2956,6 +3175,7 @@ router.post('/StudentStrenghtForDefaulter', async (req, res) => {
                                                await studentArrayWithFee.push({"is_full_free_ship":it.is_full_free_ship,"paid_upto_month_status":it.paid_upto_month_status,"student_balance":it.student_balance,"unique_key":it.admission_no+it.account_no+it.class_name+it.name,"class_name":it.class_name,"section":it.section,"name":it.name,"admission_no":it.admission_no,"account_no":it.account_no,"fee_concession":it.fee_concession,"Allfees":FeesClassWise[0].fees,"paid_upto_month":it.paid_upto_month})
                                                 }
                                          }
+                                         console.log("studentArraydatalength  "+studetntArrayLength+" indexx "+(ind+1))
                                          if(studentArray.length==feestructureCount){
                                              res.send(studentArrayWithFee)
                                         }
@@ -2970,12 +3190,14 @@ router.post('/StudentStrenghtForDefaulter', async (req, res) => {
                      }                      
                              }
                              if(StudentData.length == StudenCount){
+                               await console.log("Actual student Array lenght "+studentArray.length)
                                var feestructureCount=0                                
                                 var studetntArrayLength= studentArray.length-1
                              await studentArray.map(async(it,ind)=>{
                                    try {
                                        var class_nameforfees=it.class_name
                                        await FeeStructure.find({ class_name:class_nameforfees,session }).exec(async(err,FeesClassWise)=>{
+                                           console.log("student Array data "+it.admission_no+" Session "+session)
                                            if(FeesClassWise[0] !=undefined){
                                                //  (FeesClassWise[0].fees)})
                                                if(!JSON.stringify(studentArrayWithFee).includes(it.admission_no+it.account_no+it.class_name+it.name)){
@@ -2985,6 +3207,7 @@ router.post('/StudentStrenghtForDefaulter', async (req, res) => {
                                               await studentArrayWithFee.push({"is_full_free_ship":it.is_full_free_ship,"paid_upto_month_status":it.paid_upto_month_status,"student_balance":it.student_balance,"unique_key":it.admission_no+it.account_no+it.class_name+it.name,"class_name":it.class_name,"section":it.section,"name":it.name,"admission_no":it.admission_no,"account_no":it.account_no,"fee_concession":it.fee_concession,"Allfees":FeesClassWise[0].fees,"paid_upto_month":it.paid_upto_month})
                                                }
                                         }
+                                        console.log("studentArraydatalength  "+studetntArrayLength+" indexx "+(ind+1))
                                         if(studentArray.length==feestructureCount){
                                             res.send(studentArrayWithFee)
                                        }
@@ -3014,10 +3237,12 @@ router.post('/StudentStrenghtForDefaulter', async (req, res) => {
         try {
             if(class_name!="PRE-NUR"){
             await Academic.find({session,class_name,tc_status:"0"}).populate('student').sort({ section: 1 }).exec((err,data)=>{
+                console.log("gfgfdgfdgfdgsadsadadsa",data)
                 res.send(data)
             })
             }else{
                 await Academic.find({session,class_name,section,tc_status:"0"}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                    console.log("gfgfdgfdgfdgsadsadadsa",data)
                     res.send(data)
                 })
             }
@@ -3027,7 +3252,6 @@ router.post('/StudentStrenghtForDefaulter', async (req, res) => {
         }
     }
     else{
-        console.log("yes ia am in Deepak")
         
         
          
@@ -3039,6 +3263,7 @@ router.post('/StudentStrenghtForDefaulter', async (req, res) => {
 
 // Start StoreCSVentry Routes
 router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
+    console.log("unique_id"+req.body.unique_id);
     const {receipt_no,receipt_date,take_computer,fee_concession,is_full_free_ship,is_teacher_ward,fees,defaulter_month,name,ref_receipt_no,last_fee_date,session,admission_no,class_name,section,prospectus_fee,registration_fee,admission_fee,security_fee,account_no,paid_fees,Allfees,paid_month,paid_months,fine,paid_amount,balance,total_one_time_fee,total_monthly_fee,total_annual_fee,grand_total,payment_mode,bank,bank_v_no,check_no,bank_date,unique_id} = req.body;
     try {
         // const dataa = await Receipt.findOne({ session }).sort({ _id: -1 }).exec((err,data)=>{
@@ -3051,7 +3276,13 @@ router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
 
                 const Fee_structure_data = new Receipt({unique_id:session+receipt_no,receipt_date,take_computer,fee_concession,is_full_free_ship,is_teacher_ward,fees,defaulter_month,name,receipt_no,last_fee_date,ref_receipt_no,session,admission_no,class_name,section,prospectus_fee,registration_fee,admission_fee,security_fee,account_no,paid_fees,Allfees,paid_month,paid_months,fine,paid_amount,balance,total_one_time_fee,total_monthly_fee,total_annual_fee,grand_total,payment_mode,bank,bank_v_no,check_no,bank_date})
          Fee_structure_data.save();
-        
+        if (Fee_structure_data) {
+            console.log("Fee_structure_data")
+        }
+        else {
+            console.log("data is not stored")
+        }
+        // console.log(Fee_structure_data);
         res.send(Fee_structure_data)
             
            
@@ -3069,10 +3300,12 @@ router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
 
     // struck of students routes
     router.post('/StudentStrenghtForSos', async (req, res) => {
+        console.log('yes im in' + req.body.class_name)
         const {session,section,class_name } = req.body;
          if(class_name == ""){
             try {
                 await Academic.find({session}).populate('student').sort({ class_name: 1 }).exec((err,data)=>{
+                    console.log("gfgfdgfdgfdgsadsadadsa",data)
                     res.send(data)
                 })
              }
@@ -3084,10 +3317,12 @@ router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
             try {
                 if(class_name!="PRE-NUR"){
                 await Academic.find({session,class_name}).populate('student').sort({ section: 1 }).exec((err,data)=>{
+                    console.log("gfgfdgfdgfdgsadsadadsa",data)
                     res.send(data)
                 })
                 }else{
                     await Academic.find({session,class_name,section}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                        console.log("gfgfdgfdgfdgsadsadadsa",data)
                         res.send(data)
                     })
                 }
@@ -3099,6 +3334,7 @@ router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
         else{
             try {
                 await Academic.find({session,class_name,section}).populate('student').sort({ section: -1 }).exec((err,data)=>{
+                    console.log("gfgfdgfdgfdgsadsadadsa",data)
                     res.send(data)
                 })
              }
@@ -3110,10 +3346,12 @@ router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
     })
 
     router.post('/SosStudentList', async (req, res) => {
+        console.log('yes im in' + req.body.class_name)
         const {session,section,class_name } = req.body;
          if(class_name == ""){
             try {
                 await TransferCertificate.find({session,tc_status:'sos'}).populate('student').sort({ class_name: 1 }).exec((err,data)=>{
+                    console.log("gfgfdgfdgfdgsadsadadsa",data)
                     res.send(data)
                 })
              }
@@ -3125,10 +3363,12 @@ router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
             try {
                 if(class_name!="PRE-NUR"){
                 await TransferCertificate.find({session,tc_status:'sos',class_name}).populate('student').sort({ section: 1 }).exec((err,data)=>{
+                    console.log("gfgfdgfdgfdgsadsadadsa",data)
                     res.send(data)
                 })
                 }else{
                     await TransferCertificate.find({session,tc_status:'sos',class_name,section}).populate('student').sort({ _id: -1 }).exec((err,data)=>{
+                        console.log("gfgfdgfdgfdgsadsadadsa",data)
                         res.send(data)
                     })
                 }
@@ -3140,6 +3380,7 @@ router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
         else{
             try {
                 await Academic.find({session,tc_status:'sos',class_name,section}).populate('student').sort({ section: -1 }).exec((err,data)=>{
+                    console.log("gfgfdgfdgfdgsadsadadsa",data)
                     res.send(data)
                 })
              }
@@ -3175,7 +3416,14 @@ router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
         const { created_by,message,timestamps,sendername} = req.body;
         try {
             const Drop_Status = new DropStatus({ created_by,message,timestamps,sendername})
-            await Drop_Status.save();           
+            await Drop_Status.save();
+            if (Drop_Status) {
+                console.log("Drop_Status")
+            }
+            else {
+                console.log("data is not stored")
+            }
+            console.log(Drop_Status);
             res.send(Drop_Status)
         } catch (err) {
             return res.status(422).send(err.message)
@@ -3189,6 +3437,7 @@ router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
     router.get('/GetDropStatus', async (req, res) => {
         try {
             const data = await DropStatus.find().populate('created_by').exec((err,data)=>{
+                    console.log("gfgfdgfdgfdgsadsadadsa",data)
                     res.send(data)
                 })
             
@@ -3204,6 +3453,7 @@ router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
     // Update All Parents API
      router.patch('/updateAllParents',upload.single('image'),async (req, res) => {    
        const {studentsId,account_no,father_name,mother_name,father_occu,father_designation,father_annual_income,mother_occu,mother_desgination,mother_annual_income,parent_address,parent_city,parent_state,parent_country,parent_per_address,parent_per_city,parent_per_state,parent_per_country,parent_phone,parent_mobile,gaurdian_name,gaurdian_occu,gaurdian_designation,gaurdian_annual_income,gaurdian_address,gaurdian_city,gaurdian_state,gaurdian_country,gaurdian_per_address,gaurdian_per_city,gaurdian_per_state,gaurdian_per_country,gaurdian_phone,gaurdian_mobile} = req.body;
+        console.log(parent_city)
         JSON.parse(studentsId).map((item,index)=>{
     
             Student.findByIdAndUpdate({_id:item},{account_no,father_name,mother_name,father_occu,father_designation,father_annual_income,mother_occu,mother_desgination,mother_annual_income,parent_address,parent_city,parent_state,parent_country,parent_per_address,parent_per_city,parent_per_state,parent_per_country,parent_phone,parent_mobile,gaurdian_name,gaurdian_occu,gaurdian_designation,gaurdian_annual_income,gaurdian_address,gaurdian_city,gaurdian_state,gaurdian_country,gaurdian_per_address,gaurdian_per_city,gaurdian_per_state,gaurdian_per_country,gaurdian_phone,gaurdian_mobile}, function(err, result){
@@ -3220,7 +3470,9 @@ router.post('/StoreCSVentry', upload.single('image'), async (req, res) => {
     })
 
     router.get("/download", async(req, res) => {
+        console.log('isnde this', )
         try{
+           console.log('inside try block')
             let workbook = new excel.Workbook();
             let worksheet = workbook.addWorksheet("Student");
             worksheet.columns = [
